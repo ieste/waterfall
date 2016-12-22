@@ -7,11 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+<<<<<<< HEAD
+		0D5458521E053CCD006F48B1 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D5458511E053CCD006F48B1 /* main.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		0D54584C1E053CCD006F48B1 /* CopyFiles */ = {
+=======
 		5E8AD3D11E0511A1009F3182 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8AD3D01E0511A1009F3182 /* main.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		5E8AD3CB1E0511A1009F3182 /* CopyFiles */ = {
+>>>>>>> master
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -23,12 +31,21 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+<<<<<<< HEAD
+		0D54584E1E053CCD006F48B1 /* fix-desktop-switching */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "fix-desktop-switching"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0D5458511E053CCD006F48B1 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0D54584B1E053CCD006F48B1 /* Frameworks */ = {
+=======
 		5E8AD3CD1E0511A1009F3182 /* fix-desktop-switching */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "fix-desktop-switching"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E8AD3D01E0511A1009F3182 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		5E8AD3CA1E0511A1009F3182 /* Frameworks */ = {
+>>>>>>> master
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -38,6 +55,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+<<<<<<< HEAD
+		0D5458451E053CCD006F48B1 = {
+			isa = PBXGroup;
+			children = (
+				0D5458501E053CCD006F48B1 /* fix-desktop-switching */,
+				0D54584F1E053CCD006F48B1 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		0D54584F1E053CCD006F48B1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0D54584E1E053CCD006F48B1 /* fix-desktop-switching */,
+=======
 		5E8AD3C41E0511A1009F3182 = {
 			isa = PBXGroup;
 			children = (
@@ -50,14 +81,22 @@
 			isa = PBXGroup;
 			children = (
 				5E8AD3CD1E0511A1009F3182 /* fix-desktop-switching */,
+>>>>>>> master
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
+<<<<<<< HEAD
+		0D5458501E053CCD006F48B1 /* fix-desktop-switching */ = {
+			isa = PBXGroup;
+			children = (
+				0D5458511E053CCD006F48B1 /* main.swift */,
+=======
 		5E8AD3CF1E0511A1009F3182 /* fix-desktop-switching */ = {
 			isa = PBXGroup;
 			children = (
 				5E8AD3D01E0511A1009F3182 /* main.swift */,
+>>>>>>> master
 			);
 			path = "fix-desktop-switching";
 			sourceTree = "<group>";
@@ -65,6 +104,15 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+<<<<<<< HEAD
+		0D54584D1E053CCD006F48B1 /* fix-desktop-switching */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0D5458551E053CCD006F48B1 /* Build configuration list for PBXNativeTarget "fix-desktop-switching" */;
+			buildPhases = (
+				0D54584A1E053CCD006F48B1 /* Sources */,
+				0D54584B1E053CCD006F48B1 /* Frameworks */,
+				0D54584C1E053CCD006F48B1 /* CopyFiles */,
+=======
 		5E8AD3CC1E0511A1009F3182 /* fix-desktop-switching */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5E8AD3D41E0511A1009F3182 /* Build configuration list for PBXNativeTarget "fix-desktop-switching" */;
@@ -72,6 +120,7 @@
 				5E8AD3C91E0511A1009F3182 /* Sources */,
 				5E8AD3CA1E0511A1009F3182 /* Frameworks */,
 				5E8AD3CB1E0511A1009F3182 /* CopyFiles */,
+>>>>>>> master
 			);
 			buildRules = (
 			);
@@ -79,12 +128,27 @@
 			);
 			name = "fix-desktop-switching";
 			productName = "fix-desktop-switching";
+<<<<<<< HEAD
+			productReference = 0D54584E1E053CCD006F48B1 /* fix-desktop-switching */;
+=======
 			productReference = 5E8AD3CD1E0511A1009F3182 /* fix-desktop-switching */;
+>>>>>>> master
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
+<<<<<<< HEAD
+		0D5458461E053CCD006F48B1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0820;
+				LastUpgradeCheck = 0820;
+				ORGANIZATIONNAME = "Tony and Bella";
+				TargetAttributes = {
+					0D54584D1E053CCD006F48B1 = {
+						CreatedOnToolsVersion = 8.2;
+=======
 		5E8AD3C51E0511A1009F3182 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
@@ -94,40 +158,66 @@
 				TargetAttributes = {
 					5E8AD3CC1E0511A1009F3182 = {
 						CreatedOnToolsVersion = 8.1;
+>>>>>>> master
 						ProvisioningStyle = Automatic;
 					};
 				};
 			};
+<<<<<<< HEAD
+			buildConfigurationList = 0D5458491E053CCD006F48B1 /* Build configuration list for PBXProject "fix-desktop-switching" */;
+=======
 			buildConfigurationList = 5E8AD3C81E0511A1009F3182 /* Build configuration list for PBXProject "fix-desktop-switching" */;
+>>>>>>> master
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
+<<<<<<< HEAD
+			mainGroup = 0D5458451E053CCD006F48B1;
+			productRefGroup = 0D54584F1E053CCD006F48B1 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0D54584D1E053CCD006F48B1 /* fix-desktop-switching */,
+=======
 			mainGroup = 5E8AD3C41E0511A1009F3182;
 			productRefGroup = 5E8AD3CE1E0511A1009F3182 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				5E8AD3CC1E0511A1009F3182 /* fix-desktop-switching */,
+>>>>>>> master
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+<<<<<<< HEAD
+		0D54584A1E053CCD006F48B1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0D5458521E053CCD006F48B1 /* main.swift in Sources */,
+=======
 		5E8AD3C91E0511A1009F3182 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				5E8AD3D11E0511A1009F3182 /* main.swift in Sources */,
+>>>>>>> master
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+<<<<<<< HEAD
+		0D5458531E053CCD006F48B1 /* Debug */ = {
+=======
 		5E8AD3D21E0511A1009F3182 /* Debug */ = {
+>>>>>>> master
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -145,7 +235,11 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+<<<<<<< HEAD
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+=======
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+>>>>>>> master
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "-";
@@ -167,7 +261,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+<<<<<<< HEAD
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+=======
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
+>>>>>>> master
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -175,7 +273,11 @@
 			};
 			name = Debug;
 		};
+<<<<<<< HEAD
+		0D5458541E053CCD006F48B1 /* Release */ = {
+=======
 		5E8AD3D31E0511A1009F3182 /* Release */ = {
+>>>>>>> master
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -193,7 +295,11 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+<<<<<<< HEAD
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+=======
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+>>>>>>> master
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "-";
@@ -209,13 +315,21 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+<<<<<<< HEAD
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+=======
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
+>>>>>>> master
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 			};
 			name = Release;
 		};
+<<<<<<< HEAD
+		0D5458561E053CCD006F48B1 /* Debug */ = {
+=======
 		5E8AD3D51E0511A1009F3182 /* Debug */ = {
+>>>>>>> master
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -223,7 +337,11 @@
 			};
 			name = Debug;
 		};
+<<<<<<< HEAD
+		0D5458571E053CCD006F48B1 /* Release */ = {
+=======
 		5E8AD3D61E0511A1009F3182 /* Release */ = {
+>>>>>>> master
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -234,24 +352,44 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+<<<<<<< HEAD
+		0D5458491E053CCD006F48B1 /* Build configuration list for PBXProject "fix-desktop-switching" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0D5458531E053CCD006F48B1 /* Debug */,
+				0D5458541E053CCD006F48B1 /* Release */,
+=======
 		5E8AD3C81E0511A1009F3182 /* Build configuration list for PBXProject "fix-desktop-switching" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5E8AD3D21E0511A1009F3182 /* Debug */,
 				5E8AD3D31E0511A1009F3182 /* Release */,
+>>>>>>> master
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+<<<<<<< HEAD
+		0D5458551E053CCD006F48B1 /* Build configuration list for PBXNativeTarget "fix-desktop-switching" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0D5458561E053CCD006F48B1 /* Debug */,
+				0D5458571E053CCD006F48B1 /* Release */,
+=======
 		5E8AD3D41E0511A1009F3182 /* Build configuration list for PBXNativeTarget "fix-desktop-switching" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5E8AD3D51E0511A1009F3182 /* Debug */,
 				5E8AD3D61E0511A1009F3182 /* Release */,
+>>>>>>> master
 			);
 			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
+<<<<<<< HEAD
+	rootObject = 0D5458461E053CCD006F48B1 /* Project object */;
+=======
 	rootObject = 5E8AD3C51E0511A1009F3182 /* Project object */;
+>>>>>>> master
 }

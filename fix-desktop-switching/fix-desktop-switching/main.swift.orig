@@ -1,20 +1,29 @@
 //
 //  main.swift
+<<<<<<< HEAD
+//  fix desktop switching
+//
+//  Created by Tony Gong on 12/17/16.
+=======
 //  fix-desktop-switching
 //
 //  Created by Isabella Stephens on 17/12/2016.
+>>>>>>> master
 //  Copyright © 2016 Tony and Bella. All rights reserved.
 //
 
 import Foundation
-import CoreGraphics
-import ApplicationServices
+<<<<<<< HEAD
+
 let defaults = UserDefaults.standard
 defaults.addSuite(named: "com.apple.spaces")
 let spaces = defaults.dictionary(forKey: "SpacesDisplayConfiguration")!["Space Properties"]! as! [[String : Any]]
 for space in spaces {
     print(space["windows"]!)
 }
+=======
+import CoreGraphics
+import ApplicationServices
 
 
 var app: AXUIElement
@@ -86,3 +95,5 @@ if pid > 0 {
 
 
 
+
+>>>>>>> master
