@@ -70,8 +70,36 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
     }
 
     print(spaces[digit-1])
+    printWindowDetails(windows: spaces[digit-1])
+    print("\n\n\n")
     return nil;
 }
+
+func printWindowDetails(windows: [Int]) {
+    
+    // Get the list of all windows and cast it to an array of Anys
+    let list = CGWindowListCopyWindowInfo(CGWindowListOption.optionAll, kCGNullWindowID) as! [Any]
+    
+    // Loop through the list of windows
+    for i in list {
+        
+        let w = i as! [String: Any]
+        if windows.contains(w["kCGWindowNumber"] as! Int) {
+            
+            
+            //pid = window["kCGWindowOwnerPID"] as! Int32
+            
+            print("Window \(w["kCGWindowNumber"]!) called \(w["kCGWindowName"]!) on layer \(w["kCGWindowLayer"]!)"
+                + " with PID \(w["kCGWindowOwnerPID"]!) has bounds \(w["kCGWindowBounds"]!)")
+ 
+        }
+    }
+    
+    print(windows)
+    print("\n\n\n")
+    
+}
+
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
