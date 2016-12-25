@@ -10,14 +10,34 @@ import Cocoa
 import Foundation
 import CoreGraphics
 import ApplicationServices
+import EventKit
+
+
+func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, refcon: UnsafeMutableRawPointer?)
+    -> Unmanaged<CGEvent>? {
+        print("hey");
+        return Unmanaged.passRetained(event);
+}
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
-
-
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-
+        // Create an event tap
+        guard let tap = CGEvent.tapCreate(tap: .cgSessionEventTap,
+                                          place: .tailAppendEventTap,
+                                          options: .defaultTap,
+                                          eventsOfInterest: CGEventMask(1 << CGEventType.keyDown.rawValue),
+                                          callback: myEventTapCallback,
+                                          userInfo: nil) else {
+            print("Could not create tap!");
+            exit(0);
+        }
+        // Register event tap
+        let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0);
+        CFRunLoopAddSource(CFRunLoopGetCurrent(), source, .commonModes);
+                  
+        
         var app: AXUIElement
         var pid: Int32 = 0
         var names: CFArray?
