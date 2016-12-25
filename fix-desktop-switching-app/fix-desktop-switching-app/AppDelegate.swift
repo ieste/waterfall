@@ -12,10 +12,40 @@ import CoreGraphics
 import ApplicationServices
 import EventKit
 
+let key_map : [Int64: Int] = [0x12:1, 0x13:2, 0x14:3, 0x15:4, 0x16:6, 0x17:5, 0x19:9, 0x1A:7, 0x1C:8, 0x1D:10]
+let defaults = UserDefaults.standard
 
+// This callback was registered and is run on every key down event
 func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, refcon: UnsafeMutableRawPointer?)
     -> Unmanaged<CGEvent>? {
-        print("hey");
+        // make sure that the only modifier is Control
+        if event.flags.contains(.maskControl) &&
+            !event.flags.contains(.maskAlphaShift) &&
+            !event.flags.contains(.maskShift) &&
+            !event.flags.contains(.maskNumericPad) &&
+            !event.flags.contains(.maskSecondaryFn) &&
+            !event.flags.contains(.maskNonCoalesced) &&
+            !event.flags.contains(.maskAlternate) &&
+            !event.flags.contains(.maskCommand) &&
+            !event.flags.contains(.maskHelp) {
+            // if it's an autorepeated key, we just want to eat it up
+            if event.getIntegerValueField(.keyboardEventAutorepeat) != 0 {
+                return nil;
+            }
+            // grab the virtual keycode
+            let vkc = event.getIntegerValueField(.keyboardEventKeycode)
+            // try to map it (only possible if it's a digit 0-9)
+            if let number = key_map[vkc] {
+                // grab the space
+                let spaces = defaults.dictionary(forKey: "SpacesDisplayConfiguration")!["Space Properties"]! as! [[String : Any]]
+                if (number-1 < spaces.count) {
+                    print(spaces[number-1]["windows"]!)
+                }
+                // eat this event up
+                return nil;
+            }
+        }
+        // otherwise pass the event through
         return Unmanaged.passRetained(event);
 }
 
@@ -23,6 +53,9 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        // Add the suite to grab spaces information
+        defaults.addSuite(named: "com.apple.spaces")
+        
         // Create an event tap
         guard let tap = CGEvent.tapCreate(tap: .cgSessionEventTap,
                                           place: .tailAppendEventTap,
@@ -36,7 +69,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Register event tap
         let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0);
         CFRunLoopAddSource(CFRunLoopGetCurrent(), source, .commonModes);
-                  
         
         var app: AXUIElement
         var pid: Int32 = 0
@@ -86,13 +118,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             // Set the app to be frontmost
             AXUIElementSetAttributeValue(app, kAXFrontmostAttribute as CFString, kCFBooleanTrue)
             
-        }
-
-        let defaults = UserDefaults.standard
-        defaults.addSuite(named: "com.apple.spaces")
-        let spaces = defaults.dictionary(forKey: "SpacesDisplayConfiguration")!["Space Properties"]! as! [[String : Any]]
-        for space in spaces {
-            print(space["windows"]!)
         }
 
     }
