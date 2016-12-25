@@ -24,7 +24,7 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
             !event.flags.contains(.maskShift) &&
             !event.flags.contains(.maskNumericPad) &&
             !event.flags.contains(.maskSecondaryFn) &&
-            !event.flags.contains(.maskNonCoalesced) &&
+            //!event.flags.contains(.maskNonCoalesced) &&
             !event.flags.contains(.maskAlternate) &&
             !event.flags.contains(.maskCommand) &&
             !event.flags.contains(.maskHelp) {
@@ -53,6 +53,11 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        
+        var app: AXUIElement
+        var pid: Int32 = 0
+        var names: CFArray?
+        
         // Add the suite to grab spaces information
         defaults.addSuite(named: "com.apple.spaces")
         
@@ -66,13 +71,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             print("Could not create tap!");
             exit(0);
         }
+        
         // Register event tap
         let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0);
         CFRunLoopAddSource(CFRunLoopGetCurrent(), source, .commonModes);
-        
-        var app: AXUIElement
-        var pid: Int32 = 0
-        var names: CFArray?
         
         // Get the list of all windows and cast it to an array of Anys
         let list = CGWindowListCopyWindowInfo(CGWindowListOption.optionAll, kCGNullWindowID) as! [Any]
@@ -116,7 +118,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             print(names as Any)
             
             // Set the app to be frontmost
-            AXUIElementSetAttributeValue(app, kAXFrontmostAttribute as CFString, kCFBooleanTrue)
+            //AXUIElementSetAttributeValue(app, kAXFrontmostAttribute as CFString, kCFBooleanTrue)
             
         }
 
