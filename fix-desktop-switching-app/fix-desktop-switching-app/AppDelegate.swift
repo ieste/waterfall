@@ -15,38 +15,62 @@ import EventKit
 let key_map : [Int64: Int] = [0x12:1, 0x13:2, 0x14:3, 0x15:4, 0x16:6, 0x17:5, 0x19:9, 0x1A:7, 0x1C:8, 0x1D:10]
 let defaults = UserDefaults.standard
 
-// This callback was registered and is run on every key down event
-func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, refcon: UnsafeMutableRawPointer?)
-    -> Unmanaged<CGEvent>? {
-        // make sure that the only modifier is Control
-        if event.flags.contains(.maskControl) &&
-            !event.flags.contains(.maskAlphaShift) &&
-            !event.flags.contains(.maskShift) &&
-            !event.flags.contains(.maskNumericPad) &&
-            !event.flags.contains(.maskSecondaryFn) &&
-            !event.flags.contains(.maskNonCoalesced) &&
-            !event.flags.contains(.maskAlternate) &&
-            !event.flags.contains(.maskCommand) &&
-            !event.flags.contains(.maskHelp) {
-            // if it's an autorepeated key, we just want to eat it up
-            if event.getIntegerValueField(.keyboardEventAutorepeat) != 0 {
-                return nil;
-            }
-            // grab the virtual keycode
-            let vkc = event.getIntegerValueField(.keyboardEventKeycode)
-            // try to map it (only possible if it's a digit 0-9)
-            if let number = key_map[vkc] {
-                // grab the space
-                let spaces = defaults.dictionary(forKey: "SpacesDisplayConfiguration")!["Space Properties"]! as! [[String : Any]]
-                if (number-1 < spaces.count) {
-                    print(spaces[number-1]["windows"]!)
-                }
-                // eat this event up
-                return nil;
+func getSpaces() -> [[Int]] {
+    let mdata = defaults.dictionary(forKey: "SpacesDisplayConfiguration")!["Management Data"]! as! [String : Any]
+    var uuids : [String] = []
+    for monitor in mdata["Monitors"]! as! [[String : Any]] {
+        if let spaces = monitor["Spaces"] {
+            for space in spaces as! [[String:Any]] {
+                uuids.append(space["uuid"]! as! String)
             }
         }
-        // otherwise pass the event through
+    }
+    
+    var retval : [[Int]] = []
+    let spaces = defaults.dictionary(forKey: "SpacesDisplayConfiguration")!["Space Properties"]! as! [[String : Any]]
+    for uuid in uuids {
+        for space in spaces {
+            if uuid == space["name"]! as! String {
+                retval.append(space["windows"]! as! [Int])
+                break
+            }
+        }
+    }
+    return retval
+}
+
+// This callback was registered and is run on every key down event
+func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, refcon: UnsafeMutableRawPointer?) -> Unmanaged<CGEvent>? {
+    // make sure that the only modifier is Control
+    if !(event.flags.contains(.maskControl) &&
+        !event.flags.contains(.maskAlphaShift) &&
+        !event.flags.contains(.maskShift) &&
+        !event.flags.contains(.maskNumericPad) &&
+        !event.flags.contains(.maskSecondaryFn) &&
+        //!event.flags.contains(.maskNonCoalesced) &&
+        !event.flags.contains(.maskAlternate) &&
+        !event.flags.contains(.maskCommand) &&
+        !event.flags.contains(.maskHelp)) {
         return Unmanaged.passRetained(event);
+    }
+    
+    let vkc = event.getIntegerValueField(.keyboardEventKeycode)
+    if key_map[vkc] == nil {
+        return Unmanaged.passRetained(event);
+    }
+    
+    let digit = key_map[vkc]!
+    if event.getIntegerValueField(.keyboardEventAutorepeat) != 0 {
+        return nil;
+    }
+    
+    let spaces = getSpaces()
+    if (digit-1 >= spaces.count) {
+        return nil;
+    }
+
+    print(spaces[digit-1])
+    return nil;
 }
 
 @NSApplicationMain
