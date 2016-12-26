@@ -68,35 +68,107 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
     if (digit-1 >= spaces.count) {
         return nil;
     }
-
-    print(spaces[digit-1])
+    
+    print("\n\n\n--------------Desktop \(digit)---------------")
     printWindowDetails(windows: spaces[digit-1])
-    print("\n\n\n")
     return nil;
 }
 
 func printWindowDetails(windows: [Int]) {
-    
-    // Get the list of all windows and cast it to an array of Anys
-    let list = CGWindowListCopyWindowInfo(CGWindowListOption.optionAll, kCGNullWindowID) as! [Any]
-    
-    // Loop through the list of windows
-    for i in list {
-        
-        let w = i as! [String: Any]
+    // Get the list of all windows and cast it to an array of dicts
+    let windowList = CGWindowListCopyWindowInfo(CGWindowListOption.optionAll, kCGNullWindowID) as! [[String: Any]]
+    // Loop through the list of windows and print out details
+    for w in windowList {
         if windows.contains(w["kCGWindowNumber"] as! Int) {
-            
-            
-            //pid = window["kCGWindowOwnerPID"] as! Int32
-            
-            print("Window \(w["kCGWindowNumber"]!) called \(w["kCGWindowName"]!) on layer \(w["kCGWindowLayer"]!)"
-                + " with PID \(w["kCGWindowOwnerPID"]!) has bounds \(w["kCGWindowBounds"]!)")
- 
+            let bounds = w["kCGWindowBounds"] as! [String: Int]
+            print("\(w["kCGWindowOwnerName"]!) (PID:\(w["kCGWindowOwnerPID"]!)) -- "
+                + "window \(w["kCGWindowNumber"]!): \"\(w["kCGWindowName"]!)\"\n"
+                + "\(bounds["Height"]!) x \(bounds["Width"]!), X: \(bounds["X"]!) Y: \(bounds["Y"]!) Z: \(w["kCGWindowLayer"]!)\n")
+            if w["kCGWindowOwnerName"] as! String == "iTerm2" {
+                giveWindowFocus(windowNumber: w["kCGWindowNumber"] as! Int)
+            }
         }
     }
+}
+
+func giveWindowFocus(windowNumber: Int) {
     
-    print(windows)
-    print("\n\n\n")
+    // Get all windows and find the one we are giving focus to
+    let allWindows = CGWindowListCopyWindowInfo(CGWindowListOption.optionAll, kCGNullWindowID) as! [[String: Any]]
+    
+    for window in allWindows {
+        if window["kCGWindowNumber"] as! Int == windowNumber {
+            
+            // Print out error if accessibility features are not enabled for this application
+            if !AXIsProcessTrusted() {
+                print("Error: accessibility features needs to be enabled.")
+                return
+            }
+            
+            // Windows lower than layer 0 can't be given focus
+            //let layer = window["kCGWindowLayer"] as! Int
+            
+            let pid = window["kCGWindowOwnerPID"] as! Int32
+            let bounds = window["kCGWindowBounds"]
+            let name = window["kCGWindowName"]
+            
+            
+            
+            let app = AXUIElementCreateApplication(pid)
+            
+            // Print out the list of Accessibility Attributes for the App
+            var names: CFArray?
+            var children: CFTypeRef?
+            //AXUIElementCopyAttributeNames(app, &names)
+            //print(names as Any)
+            //var candidates: [AXUIElement]
+            //AXUIElementCopyAttributeValue(app, kAXChildrenAttribute as CFString, &children)
+            AXUIElementCopyAttributeValue(app, kAXWindowsAttribute as CFString, &children)
+            //print(children)
+            
+            let elements = children as! [AXUIElement]
+            for e in elements {
+                //print("\n\n")
+                //AXUIElementCopyAttributeNames(e, &names)
+                //print(names as Any)
+                
+                // Relevant attributes AXSize, AXTitle, AXPosition, AXFocused, AXMinimized...
+                
+                var windowName: CFTypeRef?
+                AXUIElementCopyAttributeValue(e, kAXTitleAttribute as CFString, &windowName)
+                print("\(windowName) -- \(name)")
+                
+                var size: CFTypeRef?
+                var pos: CFTypeRef?
+                AXUIElementCopyAttributeValue(e, kAXSizeAttribute as CFString, &size)
+                AXUIElementCopyAttributeValue(e, kAXPositionAttribute as CFString, &pos)
+                //print(size)
+                //print(pos)
+                //print(bounds)
+                giveFocus(element: e)
+                
+                
+                
+            }
+            // Set the app to be frontmost
+            //AXUIElementSetAttributeValue(app, kAXFrontmostAttribute as CFString, kCFBooleanTrue)
+            
+            //print(window)
+            return
+            
+        }
+    }
+    print("Window not found")
+}
+
+func giveFocus(element: AXUIElement) {
+    var names: CFArray?
+    AXUIElementCopyActionNames(element, &names)
+    //print(names)
+    AXUIElementPerformAction(element, kAXRaiseAction as CFString)
+    //AXUIElement
+    AXUIElementSetAttributeValue(element, kAXFrontmostAttribute as CFString, kCFBooleanTrue)
+    AXUIElementSetAttributeValue(element, kAXFocusedAttribute as CFString, kCFBooleanTrue)
     
 }
 
@@ -105,10 +177,6 @@ func printWindowDetails(windows: [Int]) {
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        
-        var app: AXUIElement
-        var pid: Int32 = 0
-        var names: CFArray?
         
         // Add the suite to grab spaces information
         defaults.addSuite(named: "com.apple.spaces")
@@ -127,59 +195,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Register event tap
         let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0);
         CFRunLoopAddSource(CFRunLoopGetCurrent(), source, .commonModes);
-        
-        // Get the list of all windows and cast it to an array of Anys
-        let list = CGWindowListCopyWindowInfo(CGWindowListOption.optionAll, kCGNullWindowID) as! [Any]
-        
-        // Loop through the list of windows and find the PID of Chrome
-        for i in list {
-            let window = i as! [String: Any]
-            if window["kCGWindowOwnerName"] as! String == "Google Chrome" {
-                
-                pid = window["kCGWindowOwnerPID"] as! Int32
-                
-                /*
-                 print(window["kCGWindowNumber"] as Any)
-                 print(window["kCGWindowLayer"] as Any)
-                 print(window["kCGWindowBounds"] as Any)
-                 print(window["kCGWindowName"] as Any)
-                 print(window["kCGWindowOwnerPID"] as Any)
-                 print("   ")
-                 */
-            }
-        }
-        
-        
-        // Create a Accessibility Element from the application's PID
-        if pid > 0 {
-            
-            print(pid)
-            
-            // Print out whether accessibility features are enabled for this application
-            let trusted = AXIsProcessTrusted()
-            print(trusted)
-            app = AXUIElementCreateApplication(pid)
-            
-            // Print out the list of Accessibility Attributes for the App
-            let error = AXUIElementCopyAttributeNames(app, &names)
-            if error == .success {
-                print("succeeded")
-            } else if error == .apiDisabled {
-                print("Accessibility API is disabled")
-            }
-            print(names as Any)
-            
-            // Set the app to be frontmost
-            //AXUIElementSetAttributeValue(app, kAXFrontmostAttribute as CFString, kCFBooleanTrue)
-            
-        }
-
     }
 
+    
     func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
     }
-
-
 }
 
