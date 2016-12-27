@@ -14,7 +14,7 @@ import EventKit
 
 let key_map : [Int64: Int] = [0x12:1, 0x13:2, 0x14:3, 0x15:4, 0x16:6, 0x17:5, 0x19:9, 0x1A:7, 0x1C:8, 0x1D:10]
 let defaults = UserDefaults.standard
-var windowList: [[String: Any]] = []
+var allWindows: [Int: [String:Any]] = [:]
 
 func getSpaces() -> [[Int]] {
     let mdata = defaults.dictionary(forKey: "SpacesDisplayConfiguration")!["Management Data"]! as! [String : Any]
@@ -70,23 +70,81 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
         return nil;
     }
     
-    windowList = CGWindowListCopyWindowInfo(CGWindowListOption.optionAll, kCGNullWindowID) as! [[String: Any]]
-    let visibleSpaces = getVisibleSpaces(spaces)
-    print(visibleSpaces)
+    // Build dictionary of windows
+    let windows = CGWindowListCopyWindowInfo(CGWindowListOption.optionAll, kCGNullWindowID) as! [[String: Any]]
+    for w in windows {
+        allWindows[w["kCGWindowNumber"] as! Int] = w
+    }
     
+    // Pass through key press if not for currently open desktop
+    let visibleSpaces = getVisibleSpaces(spaces)
     if !visibleSpaces.contains(digit) {
         return Unmanaged.passRetained(event);
     }
     
-    //print("\n\n\n--------------Desktop \(digit + 1)---------------")
-    //printWindowDetails(spaces[digit])
+    print("\n\n\n--------------Desktop \(digit + 1)---------------")
+    printWindowDetails(spaces[digit])
     
     let window = findFrontmostWindow(spaces[digit])
     if window != nil {
         giveFocus(window!)
     }
     
+    else {
+        let bounds = getDesktopBounds(spaces[digit])
+        if bounds != nil {
+            // Simulate mouse click
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                clickDesktop(bounds!)
+            }
+        }
+    }
+    
     return nil;
+}
+
+func clickDesktop(_ bounds: [String: Int]) {
+    var down: CGEvent?
+    var up: CGEvent?
+    let point = CGPoint(x: (bounds["X"]! + (bounds["Width"]! / 2)), y: (bounds["Y"]! + (bounds["Height"]! / 2)))
+    var move: CGEvent?
+    var drag: CGEvent?
+    
+    down = CGEvent(mouseEventSource: nil, mouseType: CGEventType.leftMouseDown, mouseCursorPosition: point, mouseButton: CGMouseButton.left)
+    up = CGEvent(mouseEventSource: nil, mouseType: CGEventType.leftMouseUp, mouseCursorPosition: point, mouseButton: CGMouseButton.left)
+    move = CGEvent(mouseEventSource: nil, mouseType: CGEventType.mouseMoved, mouseCursorPosition: point, mouseButton: CGMouseButton.left)
+    drag = CGEvent(mouseEventSource: nil, mouseType: CGEventType.leftMouseDragged, mouseCursorPosition: point, mouseButton: CGMouseButton.left)
+    
+    //move!.post(tap: CGEventTapLocation.cgSessionEventTap)
+    down!.post(tap: CGEventTapLocation.cgSessionEventTap)
+    //drag!.post(tap: CGEventTapLocation.cgSessionEventTap)
+    up!.post(tap: CGEventTapLocation.cgSessionEventTap)
+    
+    
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+        //up!.post(tap: CGEventTapLocation.cghidEventTap)
+    }
+}
+
+
+func isOnScreen(_ wid: Int) -> Bool {
+    let window = allWindows[wid]
+    if window != nil {
+        if window!["kCGWindowIsOnscreen"] != nil {
+            return true
+        }
+    }
+    return false
+}
+
+func isBackgroundWindow(_ wid: Int) -> [String: Int]? {
+    let window = allWindows[wid]
+    if window != nil {
+        if window!["kCGWindowOwnerName"] as! String == "Dock" {
+            return window!["kCGWindowBounds"] as! [String: Int]
+        }
+    }
+    return nil
 }
 
 func getVisibleSpaces(_ spaces: [[Int]]) -> [Int] {
@@ -94,7 +152,7 @@ func getVisibleSpaces(_ spaces: [[Int]]) -> [Int] {
     var i = 0
     for space in spaces {
         for wid in space {
-            if isOnScreen(wid) && isBackgroundWindow(wid).bool {
+            if isOnScreen(wid) && (isBackgroundWindow(wid) != nil) {
                 retval.append(i)
                 break
             }
@@ -104,37 +162,17 @@ func getVisibleSpaces(_ spaces: [[Int]]) -> [Int] {
     return retval
 }
 
-func isOnScreen(_ wid: Int) -> Bool {
-    for w in windowList {
-        if wid == w["kCGWindowNumber"] as! Int {
-            if w["kCGWindowIsOnscreen"] != nil {
-                return true
-            }
-        }
-    }
-    return false
-}
-
-func isBackgroundWindow(_ wid: Int) -> (bool: Bool, bounds: [String: Int]?) {
-    for w in windowList {
-        if wid == w["kCGWindowNumber"] as! Int {
-            if w["kCGWindowOwnerName"] as! String == "Dock" {
-                return (true, w["kCGWindowBounds"] as! [String: Int])
-            }
-        }
-    }
-    return (false, nil)
-}
-
 func printWindowDetails(_ windows: [Int]) {
     // Loop through the list of windows and print out details
-    for w in windowList {
-        if windows.contains(w["kCGWindowNumber"] as! Int) {
-            let bounds = w["kCGWindowBounds"] as! [String: Int]
-            print("\(w["kCGWindowOwnerName"]!) (PID:\(w["kCGWindowOwnerPID"]!)) -- "
-                + "window \(w["kCGWindowNumber"]!): \"\(w["kCGWindowName"]!)\"\n"
-                + "On Screen: \(w["kCGWindowIsOnscreen"]), \(bounds["Height"]!) x \(bounds["Width"]!), "
-                + "X: \(bounds["X"]!) Y: \(bounds["Y"]!) Z: \(w["kCGWindowLayer"]!)\n")
+    var w: [String: Any]?
+    for wid in windows {
+        w = allWindows[wid]
+        if w != nil {
+            let bounds = w!["kCGWindowBounds"] as! [String: Int]
+            print("\(w!["kCGWindowOwnerName"]!) (PID:\(w!["kCGWindowOwnerPID"]!)) -- "
+                + "window \(w!["kCGWindowNumber"]!): \"\(w!["kCGWindowName"]!)\"\n"
+                + "On Screen: \(w!["kCGWindowIsOnscreen"]), \(bounds["Height"]!) x \(bounds["Width"]!), "
+                + "X: \(bounds["X"]!) Y: \(bounds["Y"]!) Z: \(w!["kCGWindowLayer"]!)\n")
         }
     }
 }
@@ -153,7 +191,6 @@ func isWindowIn(_ windowBounds : [String : Any], _ desktopBounds : [String : Any
     if (wx >= dx) && (wy >= dy) && (wx2 <= dx2) && (wy2 <= dy2) {
         return true
     }
-    
     return false
 }
 
@@ -164,11 +201,11 @@ func findFrontmostWindow(_ windows: [Int]) -> AXUIElement? {
         return nil
     }
     
-    var bounds: [String: Int] = [:]
+    // Get the bounds of the desktop (space) we are looking at
+    var bounds: [String: Int]? = [:]
     for wid in windows {
-        let (bool, b) = isBackgroundWindow(wid)
-        if bool {
-            bounds = b!
+        bounds = isBackgroundWindow(wid)
+        if bounds != nil {
             break
         }
     }
@@ -177,11 +214,21 @@ func findFrontmostWindow(_ windows: [Int]) -> AXUIElement? {
     let onScreen = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as! [[String: Any]]
 
     for w in onScreen {
-        if isWindowIn(w["kCGWindowBounds"]! as! [String: Int], bounds) {
+        if isWindowIn(w["kCGWindowBounds"]! as! [String: Int], bounds!) {
             let element = findUIElement(w)
             if isWindow(element) {
                 return element
             }
+        }
+    }
+    return nil
+}
+
+func getDesktopBounds(_ windows: [Int]) -> [String: Int]? {
+    for wid in windows {
+        let bounds = isBackgroundWindow(wid)
+        if bounds != nil {
+            return bounds
         }
     }
     return nil
@@ -207,7 +254,11 @@ func findUIElement(_ window: [String: Any]) -> AXUIElement? {
         // Check if window title matches
         var title: CFTypeRef?
         AXUIElementCopyAttributeValue(e, kAXTitleAttribute as CFString, &title)
-        if (title as! String) != (window["kCGWindowName"] as! String) {
+        if title != nil {
+            if (title as! String) != (window["kCGWindowName"] as! String) {
+                continue
+            }
+        } else if (window["kCGWindowName"] as! String) != "" {
             continue
         }
         // Check if window dimensions and position matches
