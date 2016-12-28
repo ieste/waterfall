@@ -82,8 +82,8 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
         return Unmanaged.passRetained(event);
     }
     
-    print("\n\n\n--------------Desktop \(digit + 1)---------------")
-    printWindowDetails(spaces[digit])
+    //print("\n\n\n--------------Desktop \(digit + 1)---------------")
+    //printWindowDetails(spaces[digit])
     
     let window = findFrontmostWindow(spaces[digit])
     if window != nil {
@@ -106,24 +106,23 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
 func clickDesktop(_ bounds: [String: Int]) {
     var down: CGEvent?
     var up: CGEvent?
-    let point = CGPoint(x: (bounds["X"]! + (bounds["Width"]! / 2)), y: (bounds["Y"]! + (bounds["Height"]! / 2)))
     var move: CGEvent?
-    var drag: CGEvent?
     
-    down = CGEvent(mouseEventSource: nil, mouseType: CGEventType.leftMouseDown, mouseCursorPosition: point, mouseButton: CGMouseButton.left)
-    up = CGEvent(mouseEventSource: nil, mouseType: CGEventType.leftMouseUp, mouseCursorPosition: point, mouseButton: CGMouseButton.left)
-    move = CGEvent(mouseEventSource: nil, mouseType: CGEventType.mouseMoved, mouseCursorPosition: point, mouseButton: CGMouseButton.left)
-    drag = CGEvent(mouseEventSource: nil, mouseType: CGEventType.leftMouseDragged, mouseCursorPosition: point, mouseButton: CGMouseButton.left)
+    let clickPoint = CGPoint(x: (bounds["X"]! + (bounds["Width"]! / 2)), y: (bounds["Y"]! + 5))
+    let dummyEvent = CGEvent(source: nil)
+    let startPoint = dummyEvent!.location
     
-    //move!.post(tap: CGEventTapLocation.cgSessionEventTap)
+    // Create up and down mouse events
+    down = CGEvent(mouseEventSource: nil, mouseType: CGEventType.leftMouseDown, mouseCursorPosition: clickPoint, mouseButton: CGMouseButton.left)
+    up = CGEvent(mouseEventSource: nil, mouseType: CGEventType.leftMouseUp, mouseCursorPosition: clickPoint, mouseButton: CGMouseButton.left)
+    move = CGEvent(mouseEventSource: nil, mouseType: CGEventType.mouseMoved, mouseCursorPosition: startPoint, mouseButton: CGMouseButton.left)
+    
+    // Post events (twice to simulate a double click)
     down!.post(tap: CGEventTapLocation.cgSessionEventTap)
-    //drag!.post(tap: CGEventTapLocation.cgSessionEventTap)
     up!.post(tap: CGEventTapLocation.cgSessionEventTap)
-    
-    
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-        //up!.post(tap: CGEventTapLocation.cghidEventTap)
-    }
+    down!.post(tap: CGEventTapLocation.cgSessionEventTap)
+    up!.post(tap: CGEventTapLocation.cgSessionEventTap)
+    move!.post(tap: CGEventTapLocation.cgSessionEventTap)
 }
 
 
@@ -212,7 +211,6 @@ func findFrontmostWindow(_ windows: [Int]) -> AXUIElement? {
     
     let options = CGWindowListOption([CGWindowListOption.excludeDesktopElements, CGWindowListOption.optionOnScreenOnly])
     let onScreen = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as! [[String: Any]]
-
     for w in onScreen {
         if isWindowIn(w["kCGWindowBounds"]! as! [String: Int], bounds!) {
             let element = findUIElement(w)
