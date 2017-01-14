@@ -9,26 +9,29 @@
 import Foundation
 
 
-func getCursorLocation() -> CGPoint {
+func mouseGetCursorLocation() -> CGPoint {
     let dummyEvent = CGEvent(source: nil)
     return dummyEvent!.location
 }
 
-func click(_ location: CGPoint, _ doubleClick: Bool = false) {
+
+func mouseClick(_ location: CGPoint, doubleClick: Bool = false) {
     var down: CGEvent?
     var up: CGEvent?
     down = CGEvent(mouseEventSource: nil, mouseType: CGEventType.leftMouseDown, mouseCursorPosition: location, mouseButton: CGMouseButton.left)
     up = CGEvent(mouseEventSource: nil, mouseType: CGEventType.leftMouseUp, mouseCursorPosition: location, mouseButton: CGMouseButton.left)
     
-    down!.post(tap: CGEventTapLocation.cgSessionEventTap)
-    up!.post(tap: CGEventTapLocation.cgSessionEventTap)
+    let tapLocation = CGEventTapLocation.cghidEventTap
+    down!.post(tap: tapLocation)
+    up!.post(tap: tapLocation)
     if doubleClick {
-        down!.post(tap: CGEventTapLocation.cgSessionEventTap)
-        up!.post(tap: CGEventTapLocation.cgSessionEventTap)
+        down!.post(tap: tapLocation)
+        up!.post(tap: tapLocation)
     }
 }
 
-func moveCursor(_ location: CGPoint) {
+
+func mouseMoveCursor(_ location: CGPoint) {
     var move: CGEvent?
     move = CGEvent(mouseEventSource: nil, mouseType: CGEventType.mouseMoved, mouseCursorPosition: location, mouseButton: CGMouseButton.left)
     if move != nil {
@@ -36,8 +39,9 @@ func moveCursor(_ location: CGPoint) {
     }
 }
 
-func hiddenClick(_ location: CGPoint, _ doubleClick: Bool = false) {
-    let start = getCursorLocation()
-    click(location, doubleClick)
-    moveCursor(start)
+
+func mouseHiddenClick(_ location: CGPoint, doubleClick: Bool = false) {
+    let start = mouseGetCursorLocation()
+    mouseClick(location, doubleClick: doubleClick)
+    mouseMoveCursor(start)
 }

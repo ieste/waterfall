@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		28F788E11E29E502009E00AC /* Mouse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28F788E01E29E502009E00AC /* Mouse.swift */; };
+		28F788E31E29F25B009E00AC /* AXElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28F788E21E29F25B009E00AC /* AXElement.swift */; };
 		5E4A8B581E066E4900E4A55F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A8B571E066E4900E4A55F /* AppDelegate.swift */; };
 		5E4A8B5A1E066E4900E4A55F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A8B591E066E4900E4A55F /* ViewController.swift */; };
 		5E4A8B5C1E066E4900E4A55F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E4A8B5B1E066E4900E4A55F /* Assets.xcassets */; };
@@ -33,6 +35,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		28F788E01E29E502009E00AC /* Mouse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mouse.swift; sourceTree = "<group>"; };
+		28F788E21E29F25B009E00AC /* AXElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AXElement.swift; sourceTree = "<group>"; };
 		5E4A8B541E066E4900E4A55F /* fix-desktop-switching-app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "fix-desktop-switching-app.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E4A8B571E066E4900E4A55F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5E4A8B591E066E4900E4A55F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -100,6 +104,8 @@
 				5E4A8B5B1E066E4900E4A55F /* Assets.xcassets */,
 				5E4A8B5D1E066E4900E4A55F /* Main.storyboard */,
 				5E4A8B601E066E4900E4A55F /* Info.plist */,
+				28F788E01E29E502009E00AC /* Mouse.swift */,
+				28F788E21E29F25B009E00AC /* AXElement.swift */,
 			);
 			path = "fix-desktop-switching-app";
 			sourceTree = "<group>";
@@ -256,6 +262,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				5E4A8B5A1E066E4900E4A55F /* ViewController.swift in Sources */,
+				28F788E31E29F25B009E00AC /* AXElement.swift in Sources */,
+				28F788E11E29E502009E00AC /* Mouse.swift in Sources */,
 				5E4A8B581E066E4900E4A55F /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

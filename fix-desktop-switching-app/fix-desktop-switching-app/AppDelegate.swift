@@ -12,9 +12,11 @@ import CoreGraphics
 import ApplicationServices
 import EventKit
 
+
 let key_map : [Int64: Int] = [0x12:1, 0x13:2, 0x14:3, 0x15:4, 0x16:6, 0x17:5, 0x19:9, 0x1A:7, 0x1C:8, 0x1D:10]
 let defaults = UserDefaults.standard
 var allWindows: [Int: [String:Any]] = [:]
+
 
 func getSpaces() -> [[Int]] {
     let mdata = defaults.dictionary(forKey: "SpacesDisplayConfiguration")!["Management Data"]! as! [String : Any]
@@ -39,6 +41,7 @@ func getSpaces() -> [[Int]] {
     }
     return retval
 }
+
 
 // This callback was registered and is run on every key down event
 func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, refcon: UnsafeMutableRawPointer?) -> Unmanaged<CGEvent>? {
@@ -78,6 +81,7 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
     
     // Pass through key press if not for currently open desktop
     let visibleSpaces = getVisibleSpaces(spaces)
+    //if !visibleSpaces.contains(digit) || (visibleSpaces.count < 2) {
     if !visibleSpaces.contains(digit) {
         return Unmanaged.passRetained(event);
     }
@@ -85,9 +89,15 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
     //print("\n\n\n--------------Desktop \(digit + 1)---------------")
     //printWindowDetails(spaces[digit])
     
+    // Print out error if accessibility features are not enabled for this application
+    if !AXIsProcessTrusted() {
+        print("Error: accessibility features needs to be enabled.")
+        return nil
+    }
+    
     let window = findFrontmostWindow(spaces[digit])
     if window != nil {
-        giveFocus(window!)
+        elementGiveFocus(window!)
     }
     
     else {
@@ -103,26 +113,10 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
     return nil;
 }
 
+
 func clickDesktop(_ bounds: [String: Int]) {
-    var down: CGEvent?
-    var up: CGEvent?
-    var move: CGEvent?
-    
     let clickPoint = CGPoint(x: (bounds["X"]! + (bounds["Width"]! / 2)), y: (bounds["Y"]! + 5))
-    let dummyEvent = CGEvent(source: nil)
-    let startPoint = dummyEvent!.location
-    
-    // Create up and down mouse events
-    down = CGEvent(mouseEventSource: nil, mouseType: CGEventType.leftMouseDown, mouseCursorPosition: clickPoint, mouseButton: CGMouseButton.left)
-    up = CGEvent(mouseEventSource: nil, mouseType: CGEventType.leftMouseUp, mouseCursorPosition: clickPoint, mouseButton: CGMouseButton.left)
-    move = CGEvent(mouseEventSource: nil, mouseType: CGEventType.mouseMoved, mouseCursorPosition: startPoint, mouseButton: CGMouseButton.left)
-    
-    // Post events (twice to simulate a double click)
-    down!.post(tap: CGEventTapLocation.cgSessionEventTap)
-    up!.post(tap: CGEventTapLocation.cgSessionEventTap)
-    down!.post(tap: CGEventTapLocation.cgSessionEventTap)
-    up!.post(tap: CGEventTapLocation.cgSessionEventTap)
-    move!.post(tap: CGEventTapLocation.cgSessionEventTap)
+    mouseHiddenClick(clickPoint, doubleClick: true)
 }
 
 
@@ -136,6 +130,7 @@ func isOnScreen(_ wid: Int) -> Bool {
     return false
 }
 
+
 func isBackgroundWindow(_ wid: Int) -> [String: Int]? {
     let window = allWindows[wid]
     if window != nil {
@@ -145,6 +140,7 @@ func isBackgroundWindow(_ wid: Int) -> [String: Int]? {
     }
     return nil
 }
+
 
 func getVisibleSpaces(_ spaces: [[Int]]) -> [Int] {
     var retval: [Int] = []
@@ -161,6 +157,7 @@ func getVisibleSpaces(_ spaces: [[Int]]) -> [Int] {
     return retval
 }
 
+
 func printWindowDetails(_ windows: [Int]) {
     // Loop through the list of windows and print out details
     var w: [String: Any]?
@@ -175,6 +172,7 @@ func printWindowDetails(_ windows: [Int]) {
         }
     }
 }
+
 
 func isWindowIn(_ windowBounds : [String : Any], _ desktopBounds : [String : Any]) -> Bool {
     
@@ -193,34 +191,27 @@ func isWindowIn(_ windowBounds : [String : Any], _ desktopBounds : [String : Any
     return false
 }
 
+
 func findFrontmostWindow(_ windows: [Int]) -> AXUIElement? {
-    // Print out error if accessibility features are not enabled for this application
-    if !AXIsProcessTrusted() {
-        print("Error: accessibility features needs to be enabled.")
-        return nil
-    }
     
     // Get the bounds of the desktop (space) we are looking at
-    var bounds: [String: Int]? = [:]
-    for wid in windows {
-        bounds = isBackgroundWindow(wid)
-        if bounds != nil {
-            break
-        }
-    }
+    let bounds = getDesktopBounds(windows)
     
-    let options = CGWindowListOption([CGWindowListOption.excludeDesktopElements, CGWindowListOption.optionOnScreenOnly])
-    let onScreen = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as! [[String: Any]]
-    for w in onScreen {
-        if isWindowIn(w["kCGWindowBounds"]! as! [String: Int], bounds!) {
-            let element = findUIElement(w)
-            if isWindow(element) {
-                return element
+    if bounds != nil {
+        let options = CGWindowListOption([CGWindowListOption.excludeDesktopElements, CGWindowListOption.optionOnScreenOnly])
+        let onScreen = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as! [[String: Any]]
+        for w in onScreen {
+            if isWindowIn(w["kCGWindowBounds"]! as! [String: Int], bounds!) {
+                let element = findUIElement(w)
+                if elementIsWindow(element) {
+                    return element
+                }
             }
         }
     }
     return nil
 }
+
 
 func getDesktopBounds(_ windows: [Int]) -> [String: Int]? {
     for wid in windows {
@@ -232,71 +223,26 @@ func getDesktopBounds(_ windows: [Int]) -> [String: Int]? {
     return nil
 }
 
+
 func findUIElement(_ window: [String: Any]) -> AXUIElement? {
 
     // Create a AXUIElement for the application based on the window's PID
     let pid = window["kCGWindowOwnerPID"] as! Int32
     let app = AXUIElementCreateApplication(pid)
     
-    // Store the window's bounds
     let bounds = window["kCGWindowBounds"] as! [String: Int]
+    let title = window["kCGWindowName"] as! String
     
-    // Get the children (windows) of the application and try to find the correct window
-    var children: CFTypeRef?
-    AXUIElementCopyAttributeValue(app, kAXWindowsAttribute as CFString, &children)
-    if children == nil {
-        return nil
-    }
-    let elements = children as! [AXUIElement]
-    for e in elements {
-        // Check if window title matches
-        var title: CFTypeRef?
-        AXUIElementCopyAttributeValue(e, kAXTitleAttribute as CFString, &title)
-        if title != nil {
-            if (title as! String) != (window["kCGWindowName"] as! String) {
-                continue
-            }
-        } else if (window["kCGWindowName"] as! String) != "" {
+    for e in elementGetChildren(app) {
+        if elementGetTitle(e) != title {
             continue
         }
-        // Check if window dimensions and position matches
-        var position: CFTypeRef?
-        var size: CFTypeRef?
-        AXUIElementCopyAttributeValue(e, kAXPositionAttribute as CFString, &position)
-        AXUIElementCopyAttributeValue(e, kAXSizeAttribute as CFString, &size)
-        var p: CGPoint = CGPoint()
-        var s: CGSize = CGSize()
-        AXValueGetValue(position as! AXValue, AXValueType.cgPoint, &p)
-        AXValueGetValue(size as! AXValue, AXValueType.cgSize, &s)
-        if p.x == CGFloat(bounds["X"]!) &&
-            p.y == CGFloat(bounds["Y"]!) &&
-            s.width == CGFloat(bounds["Width"]!) &&
-            s.height == CGFloat(bounds["Height"]!) {
+        if elementGetBounds(e)! == bounds {
             return e
         }
     }
-    return nil
-}
-
-func isWindow(_ element: AXUIElement?) -> Bool {
-    if element == nil {
-        return false
-    }
     
-    var role: CFTypeRef?
-    AXUIElementCopyAttributeValue(element!, kAXRoleAttribute as CFString, &role)
-    if (role! as! String) != kAXWindowRole {
-        return false
-    }
-    return true
-}
-
-
-func giveFocus(_ element: AXUIElement) {
-    AXUIElementSetAttributeValue(element, kAXMainAttribute as CFString, kCFBooleanTrue)
-    var parent: CFTypeRef?
-    AXUIElementCopyAttributeValue(element, kAXParentAttribute as CFString, &parent)
-    AXUIElementSetAttributeValue(parent as! AXUIElement, kAXFrontmostAttribute as CFString, kCFBooleanTrue)
+    return nil
 }
 
 
