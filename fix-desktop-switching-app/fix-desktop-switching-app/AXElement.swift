@@ -12,9 +12,12 @@ import Foundation
 func elementGiveFocus(_ element: AXUIElement) {
     if elementIsWindow(element) {
         AXUIElementSetAttributeValue(element, kAXMainAttribute as CFString, kCFBooleanTrue)
-        var parent: CFTypeRef?
-        AXUIElementCopyAttributeValue(element, kAXParentAttribute as CFString, &parent)
-        AXUIElementSetAttributeValue(parent as! AXUIElement, kAXFrontmostAttribute as CFString, kCFBooleanTrue)
+        let parent = elementGetParent(element)
+        if parent != nil && elementIsApplication(parent) {
+            AXUIElementSetAttributeValue(parent!, kAXFrontmostAttribute as CFString, kCFBooleanTrue)
+        }
+    } else {
+        NSLog("Cannot give focus to non-window UI element.")
     }
 }
 
@@ -25,7 +28,26 @@ func elementIsWindow(_ element: AXUIElement?) -> Bool {
     }
     var role: CFTypeRef?
     AXUIElementCopyAttributeValue(element!, kAXRoleAttribute as CFString, &role)
+    if role == nil {
+        return false
+    }
     if (role! as! String) != kAXWindowRole {
+        return false
+    }
+    return true
+}
+
+
+func elementIsApplication(_ element: AXUIElement?) -> Bool {
+    if element == nil {
+        return false
+    }
+    var role: CFTypeRef?
+    AXUIElementCopyAttributeValue(element!, kAXRoleAttribute as CFString, &role)
+    if role == nil {
+        return false
+    }
+    if (role! as! String) != kAXApplicationRole {
         return false
     }
     return true
@@ -83,4 +105,13 @@ func elementGetChildren(_ element: AXUIElement) -> [AXUIElement] {
         return []
     }
     return children as! [AXUIElement]
+}
+
+func elementGetParent(_ element: AXUIElement) -> AXUIElement? {
+    var parent: CFTypeRef?
+    AXUIElementCopyAttributeValue(element, kAXParentAttribute as CFString, &parent)
+    if parent == nil {
+        return nil
+    }
+    return parent as! AXUIElement
 }

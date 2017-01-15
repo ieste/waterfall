@@ -11,6 +11,12 @@ import Foundation
 
 func mouseGetCursorLocation() -> CGPoint {
     let dummyEvent = CGEvent(source: nil)
+    
+    if dummyEvent == nil {
+        NSLog("Mouse location could not be retrieved.")
+        return CGPoint(x: 0, y: 0)
+    }
+    
     return dummyEvent!.location
 }
 
@@ -18,11 +24,14 @@ func mouseGetCursorLocation() -> CGPoint {
 func mouseClick(_ location: CGPoint, doubleClick: Bool = false) {
     
     let tapLocation = CGEventTapLocation.cgSessionEventTap
-    var down: CGEvent?
-    var up: CGEvent?
-  
-    down = CGEvent(mouseEventSource: nil, mouseType: CGEventType.leftMouseDown, mouseCursorPosition: location, mouseButton: CGMouseButton.left)
-    up = CGEvent(mouseEventSource: nil, mouseType: CGEventType.leftMouseUp, mouseCursorPosition: location, mouseButton: CGMouseButton.left)
+    
+    let down = CGEvent(mouseEventSource: nil, mouseType: CGEventType.leftMouseDown, mouseCursorPosition: location, mouseButton: CGMouseButton.left)
+    let up = CGEvent(mouseEventSource: nil, mouseType: CGEventType.leftMouseUp, mouseCursorPosition: location, mouseButton: CGMouseButton.left)
+
+    if down == nil || up == nil {
+        NSLog("Mouse click event could not be created.")
+        return
+    }
     
     down!.flags.remove(.maskControl)
     up!.flags.remove(.maskControl)
@@ -37,10 +46,11 @@ func mouseClick(_ location: CGPoint, doubleClick: Bool = false) {
 
 
 func mouseMoveCursor(_ location: CGPoint) {
-    var move: CGEvent?
-    move = CGEvent(mouseEventSource: nil, mouseType: CGEventType.mouseMoved, mouseCursorPosition: location, mouseButton: CGMouseButton.left)
+    let move = CGEvent(mouseEventSource: nil, mouseType: CGEventType.mouseMoved, mouseCursorPosition: location, mouseButton: CGMouseButton.left)
     if move != nil {
         move!.post(tap: CGEventTapLocation.cgSessionEventTap)
+    } else {
+        NSLog("Mouse move event could not be created.")
     }
 }
 

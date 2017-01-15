@@ -235,7 +235,10 @@ func findUIElement(_ window: [String: Any]) -> AXUIElement? {
     let app = AXUIElementCreateApplication(pid)
     
     let bounds = window["kCGWindowBounds"] as! [String: Int]
-    let title = window["kCGWindowName"] as! String
+    var title = ""
+    if window["kCGWindowName"] != nil {
+        title = window["kCGWindowName"] as! String
+    }
     
     for e in elementGetChildren(app) {
         if elementGetTitle(e) == title && elementGetBounds(e)! == bounds {
