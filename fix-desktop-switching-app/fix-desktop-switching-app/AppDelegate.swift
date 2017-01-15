@@ -95,9 +95,13 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
         return nil
     }
     
+    
     let window = findFrontmostWindow(spaces[digit])
     if window != nil {
-        elementGiveFocus(window!)
+        let point = elementGetPosition(window!)
+        if point != nil {
+            mouseHiddenClick(point!)
+        }
     }
     
     else {
@@ -115,7 +119,7 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
 
 
 func clickDesktop(_ bounds: [String: Int]) {
-    let clickPoint = CGPoint(x: (bounds["X"]! + (bounds["Width"]! / 2)), y: (bounds["Y"]! + 5))
+    let clickPoint = CGPoint(x: (bounds["X"]! + 2 * (bounds["Width"]! / 3)), y: (bounds["Y"]! + 5))
     mouseHiddenClick(clickPoint, doubleClick: true)
 }
 
@@ -234,10 +238,7 @@ func findUIElement(_ window: [String: Any]) -> AXUIElement? {
     let title = window["kCGWindowName"] as! String
     
     for e in elementGetChildren(app) {
-        if elementGetTitle(e) != title {
-            continue
-        }
-        if elementGetBounds(e)! == bounds {
+        if elementGetTitle(e) == title && elementGetBounds(e)! == bounds {
             return e
         }
     }

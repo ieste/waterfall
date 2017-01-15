@@ -16,12 +16,17 @@ func mouseGetCursorLocation() -> CGPoint {
 
 
 func mouseClick(_ location: CGPoint, doubleClick: Bool = false) {
+    
+    let tapLocation = CGEventTapLocation.cgSessionEventTap
     var down: CGEvent?
     var up: CGEvent?
+  
     down = CGEvent(mouseEventSource: nil, mouseType: CGEventType.leftMouseDown, mouseCursorPosition: location, mouseButton: CGMouseButton.left)
     up = CGEvent(mouseEventSource: nil, mouseType: CGEventType.leftMouseUp, mouseCursorPosition: location, mouseButton: CGMouseButton.left)
     
-    let tapLocation = CGEventTapLocation.cghidEventTap
+    down!.flags.remove(.maskControl)
+    up!.flags.remove(.maskControl)
+
     down!.post(tap: tapLocation)
     up!.post(tap: tapLocation)
     if doubleClick {
