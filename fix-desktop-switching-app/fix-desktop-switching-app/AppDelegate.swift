@@ -79,22 +79,20 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
         allWindows[w["kCGWindowNumber"] as! Int] = w
     }
     
-    // Pass through key press if not for currently open desktop
-    let visibleSpaces = getVisibleSpaces(spaces)
-    //if !visibleSpaces.contains(digit) || (visibleSpaces.count < 2) {
-    if !visibleSpaces.contains(digit) {
-        return Unmanaged.passRetained(event);
-    }
-    
     //print("\n\n\n--------------Desktop \(digit + 1)---------------")
     //printWindowDetails(spaces[digit])
     
     // Print out error if accessibility features are not enabled for this application
     if !AXIsProcessTrusted() {
-        print("Error: accessibility features needs to be enabled.")
-        return nil
+        NSLog("Error: accessibility features need to be enabled.")
+        return Unmanaged.passRetained(event);
     }
     
+    // Pass through key press if not for currently open desktop
+    let visibleSpaces = getVisibleSpaces(spaces)
+    if !visibleSpaces.contains(digit) || (visibleSpaces.count < 2) {
+        return Unmanaged.passRetained(event);
+    }
     
     let window = findFrontmostWindow(spaces[digit])
     if window != nil {
@@ -107,10 +105,8 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
     else {
         let bounds = getDesktopBounds(spaces[digit])
         if bounds != nil {
-            // Simulate mouse click
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                clickDesktop(bounds!)
-            }
+            let clickPoint = CGPoint(x: (bounds!["X"]! + (bounds!["Width"]! - 5)), y: (bounds!["Y"]! + 5))
+            mouseHiddenClick(clickPoint, rightClick: true)
         }
     }
     
@@ -118,18 +114,10 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
 }
 
 
-func clickDesktop(_ bounds: [String: Int]) {
-    let clickPoint = CGPoint(x: (bounds["X"]! + 2 * (bounds["Width"]! / 3)), y: (bounds["Y"]! + 5))
-    mouseHiddenClick(clickPoint, doubleClick: true)
-}
-
-
 func isOnScreen(_ wid: Int) -> Bool {
     let window = allWindows[wid]
-    if window != nil {
-        if window!["kCGWindowIsOnscreen"] != nil {
-            return true
-        }
+    if window != nil && window!["kCGWindowIsOnscreen"] != nil {
+        return true
     }
     return false
 }
@@ -137,10 +125,8 @@ func isOnScreen(_ wid: Int) -> Bool {
 
 func isBackgroundWindow(_ wid: Int) -> [String: Int]? {
     let window = allWindows[wid]
-    if window != nil {
-        if window!["kCGWindowOwnerName"] as! String == "Dock" {
-            return window!["kCGWindowBounds"] as! [String: Int]
-        }
+    if window != nil && (window!["kCGWindowOwnerName"] as! String) == "Dock" {
+        return window!["kCGWindowBounds"] as! [String: Int]
     }
     return nil
 }
