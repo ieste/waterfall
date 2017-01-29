@@ -291,28 +291,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        // request accessibility API permissions
-        let key = kAXTrustedCheckOptionPrompt.takeUnretainedValue() as NSString
-        let options = NSDictionary(object: kCFBooleanTrue,
-                                   forKey: key) as CFDictionary
-        if !AXIsProcessTrustedWithOptions(options) {
-            NSLog("I don't have the necessary permissions!")
-        } else {
-            // Create an event tap
-            let bitmask = CGEventMask(1 << CGEventType.keyDown.rawValue)
-            guard let tap = CGEvent.tapCreate(tap: .cgSessionEventTap,
-                                              place: .tailAppendEventTap,
-                                              options: .defaultTap,
-                                              eventsOfInterest: bitmask,
-                                              callback: myEventTapCallback,
-                                              userInfo: nil)
-            else {
-                NSLog("I had access to accessibility API but could not create tap!")
-                exit(0);
-            }
-            // Register event tap
-            let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0);
-            CFRunLoopAddSource(CFRunLoopGetCurrent(), source, .commonModes);
+        
+        // Check a setting exists for launch at login
+        let launchSetting = UserDefaults.standard.string(forKey: launchAtLogin)
+        if launchSetting == nil {
+            UserDefaults.standard.set(false, forKey: launchAtLogin)
         }
         
         // Create the menu bar button and link it to the toggle popover callback
@@ -321,15 +304,47 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             button.action = #selector(AppDelegate.togglePopover)
         }
         
-        // Check a setting exists for launch at login
-        let launchSetting = UserDefaults.standard.string(forKey: launchAtLogin)
-        if launchSetting == nil {
-            UserDefaults.standard.set(false, forKey: launchAtLogin)
+        // request accessibility API permissions
+        let key = kAXTrustedCheckOptionPrompt.takeUnretainedValue() as NSString
+        let options = NSDictionary(object: kCFBooleanTrue,
+                                   forKey: key) as CFDictionary
+        
+        guard AXIsProcessTrustedWithOptions(options) else {
+            NSLog("I don't have the necessary permissions!")
+            
+            // Set the controller for the popover
+            popover.contentViewController = StartViewController(nibName: "StartViewController", bundle: nil)
+            if let button = statusItem.button {
+                popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
+            }
+            
+            return
         }
         
+        
+        // Add the suite to grab spaces information
+        defaults.addSuite(named: "com.apple.spaces")
+            
+        // Create an event tap
+        let bitmask = CGEventMask(1 << CGEventType.keyDown.rawValue)
+        guard let tap = CGEvent.tapCreate(tap: .cgSessionEventTap,
+                                          place: .tailAppendEventTap,
+                                          options: .defaultTap,
+                                          eventsOfInterest: bitmask,
+                                          callback: myEventTapCallback,
+                                          userInfo: nil)
+        else {
+            NSLog("I had access to accessibility API but could not create tap!")
+            exit(0);
+        }
+        
+        // Register event tap
+        let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0);
+        CFRunLoopAddSource(CFRunLoopGetCurrent(), source, .commonModes);
+            
         // Set the controller for the popover
         popover.contentViewController = WaterfallViewController(nibName: "WaterfallViewController", bundle: nil)
-        
+            
         // Create an event monitor for tracking clicks outside of the popover (to close it)
         let mask = NSEventMask([NSEventMask.leftMouseDown, NSEventMask.rightMouseDown])
         eventMonitor = EventMonitor(mask: mask) { [unowned self] event in
@@ -338,29 +353,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
         eventMonitor?.start()
-        
-        // Add the suite to grab spaces information
-        defaults.addSuite(named: "com.apple.spaces")
-        
-        // Create an event tap
-        
-        guard let tap = CGEvent.tapCreate(tap: .cgSessionEventTap,
-                                          place: .tailAppendEventTap,
-                                          options: .defaultTap,
-                                          eventsOfInterest: CGEventMask(1 << CGEventType.keyDown.rawValue),
-                                          callback: myEventTapCallback,
-                                          userInfo: nil)
-        else {
-            NSLog("Could not create tap!");
-            exit(0);
-        }
-        
-        // Register event tap
-        let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0);
-        CFRunLoopAddSource(CFRunLoopGetCurrent(), source, .commonModes);
- 
-        /////////////////////////////////////////////////////////////
-        
     }
     
     

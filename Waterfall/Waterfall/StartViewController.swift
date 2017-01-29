@@ -19,4 +19,8 @@ class StartViewController: NSViewController {
         NSApplication.shared().relaunch(sender:nil)
     }
     
+    @IBAction func quit(sender: NSButton) {
+        NSApplication.shared().terminate(sender)
+    }
+    
 }
