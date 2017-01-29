@@ -291,6 +291,29 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        // request accessibility API permissions
+        let key = kAXTrustedCheckOptionPrompt.takeUnretainedValue() as NSString
+        let options = NSDictionary(object: kCFBooleanTrue,
+                                   forKey: key) as CFDictionary
+        if !AXIsProcessTrustedWithOptions(options) {
+            NSLog("I don't have the necessary permissions!")
+        } else {
+            // Create an event tap
+            let bitmask = CGEventMask(1 << CGEventType.keyDown.rawValue)
+            guard let tap = CGEvent.tapCreate(tap: .cgSessionEventTap,
+                                              place: .tailAppendEventTap,
+                                              options: .defaultTap,
+                                              eventsOfInterest: bitmask,
+                                              callback: myEventTapCallback,
+                                              userInfo: nil)
+            else {
+                NSLog("I had access to accessibility API but could not create tap!")
+                exit(0);
+            }
+            // Register event tap
+            let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0);
+            CFRunLoopAddSource(CFRunLoopGetCurrent(), source, .commonModes);
+        }
         
         // Create the menu bar button and link it to the toggle popover callback
         if let button = statusItem.button {
@@ -316,27 +339,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         eventMonitor?.start()
         
-        
-        //////////////////////////////////////////////////////////
         // Add the suite to grab spaces information
         defaults.addSuite(named: "com.apple.spaces")
         
-        // Create an event tap
-        guard let tap = CGEvent.tapCreate(tap: .cgSessionEventTap,
-                                          place: .tailAppendEventTap,
-                                          options: .defaultTap,
-                                          eventsOfInterest: CGEventMask(1 << CGEventType.keyDown.rawValue),
-                                          callback: myEventTapCallback,
-                                          userInfo: nil)
-        else {
-            NSLog("Could not create tap!");
-            exit(0);
-        }
-        
-        // Register event tap
-        let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0);
-        CFRunLoopAddSource(CFRunLoopGetCurrent(), source, .commonModes);
-        /////////////////////////////////////////////////////////////
     }
     
     
