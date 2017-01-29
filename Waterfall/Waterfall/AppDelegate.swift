@@ -57,12 +57,12 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
         !event.flags.contains(.maskAlternate) &&
         !event.flags.contains(.maskCommand) &&
         !event.flags.contains(.maskHelp)) {
-        return Unmanaged.passRetained(event);
+        return Unmanaged.passUnretained(event);
     }
     
     let vkc = event.getIntegerValueField(.keyboardEventKeycode)
     if key_map[vkc] == nil {
-        return Unmanaged.passRetained(event);
+        return Unmanaged.passUnretained(event);
     }
     
     let digit = key_map[vkc]! - 1
@@ -87,7 +87,7 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
     // Pass through key press if not for currently open desktop
     let visibleSpaces = getVisibleSpaces(spaces)
     if !visibleSpaces.contains(digit) || (visibleSpaces.count < 1) {
-        return Unmanaged.passRetained(event);
+        return Unmanaged.passUnretained(event);
     }
     
     
