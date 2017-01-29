@@ -45,7 +45,7 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <action selector="relaunchWithSender:" target="-2" id="vPR-nx-zOQ"/>
+                        <action selector="relaunchWithSender:" target="-2" id="iKQ-GU-vDH"/>
                     </connections>
                 </button>
             </subviews>

@@ -25,7 +25,7 @@ class WaterfallViewController: NSViewController {
             checkbox.state = 0
         }
     }
-    
+
     
     @IBAction func quit(sender: NSButton) {
         NSApplication.shared().terminate(sender)
@@ -37,7 +37,7 @@ class WaterfallViewController: NSViewController {
     }
     
     
-    @IBAction func launch_box(sender: NSButton) {
+    @IBAction func launchBox(sender: NSButton) {
         
         let appBundleIdentifier = NSString(string: "com.tonyandbella.WaterfallLaunchHelper") as CFString
         
@@ -56,6 +56,14 @@ class WaterfallViewController: NSViewController {
                 NSLog("Failed to add login item.")
             }
         }
+    }
+    
+    
+    @IBAction func test(sender: NSButton) {
+        let appDelegate = NSApplication.shared().delegate as! AppDelegate
+        let aVariable = appDelegate.statusItem
+        //NSStatusBar.system().removeStatusItem(aVariable)
+        
     }
 }
 

@@ -49,6 +49,7 @@ autoreleasepool {
         // Attempt to relaunch the application
         do {
             try NSWorkspace.shared().launchApplication(at: bundleURL, configuration: [:])
+            NSLog("Application launch by WaterfallRelaunchHelper succeeded.")
         } catch {
             NSLog("Application launch by WaterfallRelaunchHelper failed.")
             fatalError("Relaunch: NSWorkspace.shared().launchApplication failed.")

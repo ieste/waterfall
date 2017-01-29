@@ -290,6 +290,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let launchAtLogin = "launchAtLogin"
     
     
+    func applicationDidBecomeActive(_ notification: Notification) {
+        NSLog("Active")
+    }
+    
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         
         // Check a setting exists for launch at login
