@@ -102,9 +102,7 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
         if point != nil {
             mouseHiddenClick(point!)
         }
-    }
-        
-    else {
+    } else {
         let bounds = getDesktopBounds(spaces[digit])
         if bounds != nil {
             let clickPoint = CGPoint(x: (bounds!["X"]! + (bounds!["Width"]! - 5)), y: (bounds!["Y"]! + 5))
@@ -187,20 +185,23 @@ func isWindowIn(_ windowBounds : [String : Any], _ desktopBounds : [String : Any
 func findFrontmostWindow(_ windows: [Int]) -> AXUIElement? {
     
     // Get the bounds of the desktop (space) we are looking at
-    let bounds = getDesktopBounds(windows)
+    guard let bounds = getDesktopBounds(windows) else {
+        NSLog("Finding frontmost window failed as desktop bounds couldn't be retreived.")
+        return nil
+    }
+
+    let options = CGWindowListOption([CGWindowListOption.excludeDesktopElements, CGWindowListOption.optionOnScreenOnly])
+    let onScreen = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as! [[String: Any]]
     
-    if bounds != nil {
-        let options = CGWindowListOption([CGWindowListOption.excludeDesktopElements, CGWindowListOption.optionOnScreenOnly])
-        let onScreen = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as! [[String: Any]]
-        for w in onScreen {
-            if isWindowIn(w["kCGWindowBounds"]! as! [String: Int], bounds!) {
-                let element = findUIElement(w)
-                if elementIsWindow(element) {
-                    return element
-                }
+    for w in onScreen {
+        if isWindowIn(w["kCGWindowBounds"]! as! [String: Int], bounds) {
+            let element = findUIElement(w)
+            if elementIsWindow(element) {
+                return element
             }
         }
     }
+
     return nil
 }
 
@@ -252,6 +253,7 @@ extension NSApplication {
         task.launch()
     }
 }
+
 
 
 @NSApplicationMain
