@@ -46,7 +46,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if launchSetting == nil {
             UserDefaults.standard.set(false, forKey: launchAtLogin)
         }
-        print(launchSetting)
         
         // Set the controller for the popover
         popover.contentViewController = fdspViewController(nibName: "fdspViewController", bundle: nil)
@@ -69,7 +68,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func showPopover(sender: AnyObject?) {
         if let button = statusItem.button {
-            //popover.showRelativeToRect(button.bounds, ofView: button, preferredEdge: NSMinYEdge)
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
         }
         eventMonitor?.start()
