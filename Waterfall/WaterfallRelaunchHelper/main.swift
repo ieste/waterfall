@@ -2,8 +2,7 @@
 //  main.swift
 //  WaterfallRelaunchHelper
 //
-//  Created by Isabella Stephens on 28/1/17.
-//  Copyright © 2017 tonyandbella. All rights reserved.
+//  Copied from:
 //  http://stackoverflow.com/questions/27479801/restart-application-programmaticaly/39591935#39591935
 //
 
@@ -18,9 +17,7 @@ class Observer: NSObject {
         _callback = callback
     }
     
-    override func observeValue(forKeyPath keyPath: String?,
-                               of object: Any?,
-                               change: [NSKeyValueChangeKey : Any]?,
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?,
                                context: UnsafeMutableRawPointer?) {
         _callback()
     }
@@ -30,16 +27,15 @@ class Observer: NSObject {
 // main
 autoreleasepool {
     
-    // the application pid
+    // Extract the application PID from the command line args
     guard let parentPID = Int32(CommandLine.arguments[1]) else {
-        NSLog("No PID received, can't relaunch app.")
+        NSLog("No PID received by WaterfallRelaunchHelper, can't relaunch app.")
         fatalError("Relaunch: parentPID == nil.")
     }
     
-    // get the application instance
+    // Get the application instance
     if let app = NSRunningApplication(processIdentifier: parentPID) {
         
-        // application URL
         let bundleURL = app.bundleURL!
         
         // terminate() and wait terminated.
@@ -50,12 +46,11 @@ autoreleasepool {
         CFRunLoopRun() // wait KVO notification
         app.removeObserver(listener, forKeyPath: "isTerminated", context: nil)
         
-        // relaunch
+        // Attempt to relaunch the application
         do {
             try NSWorkspace.shared().launchApplication(at: bundleURL, configuration: [:])
-            NSLog("Launched application.")
         } catch {
-            NSLog("Application launch by relaunch helper failed.")
+            NSLog("Application launch by WaterfallRelaunchHelper failed.")
             fatalError("Relaunch: NSWorkspace.shared().launchApplication failed.")
         }
     }

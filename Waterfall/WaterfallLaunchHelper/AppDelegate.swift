@@ -13,19 +13,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @IBOutlet weak var window: NSWindow!
     
-    
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        NSLog("Trying to launch the app!")
-        if NSWorkspace.shared().launchApplication("Waterfall") {
-            NSLog("Successfully launched app.")
-        } else {
-            NSLog("Failed to launch app.")
-        }
+        
+        // Attempt to launch Waterfall
+        if NSWorkspace.shared().launchApplication("Waterfall") { NSLog("Successfully launched Waterfall from WaterfallLaunchHelper.") }
+        else { NSLog("Failed to launch Waterfall from WaterfallLaunchHelper.") }
+        
+        // Terminate the helper application
         NSApp.terminate(nil)
     }
     
-    func applicationWillTerminate(_ aNotification: Notification) {
-        // Insert code here to tear down your application
-    }
+    func applicationWillTerminate(_ aNotification: Notification) {}
 }
 

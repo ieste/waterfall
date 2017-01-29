@@ -84,39 +84,31 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
     //print("\n\n\n--------------Desktop \(digit + 1)---------------")
     //printWindowDetails(spaces[digit])
     
-    // Print out error if accessibility features are not enabled for this application
-    if !AXIsProcessTrusted() {
-        NSLog("Error: accessibility features need to be enabled.")
-        return Unmanaged.passRetained(event);
-    }
-    
     // Pass through key press if not for currently open desktop
     let visibleSpaces = getVisibleSpaces(spaces)
-    if !visibleSpaces.contains(digit) || (visibleSpaces.count < 2) {
+    if !visibleSpaces.contains(digit) || (visibleSpaces.count < 1) {
         return Unmanaged.passRetained(event);
     }
     
-    let window = findFrontmostWindow(spaces[digit])
-    if window != nil {
-        let point = elementGetPosition(window!)
-        if point != nil {
-            mouseHiddenClick(point!)
-        }
-    } else {
-        let bounds = getDesktopBounds(spaces[digit])
-        if bounds != nil {
-            let clickPoint = CGPoint(x: (bounds!["X"]! + (bounds!["Width"]! - 5)), y: (bounds!["Y"]! + 5))
-            mouseHiddenClick(clickPoint, rightClick: true)
-        }
-    }
     
+    guard let window = findFrontmostWindow(spaces[digit]) else {
+        // If no frontmost window can be found, give focus to desktop by clicking menu bar
+        guard let bounds = getDesktopBounds(spaces[digit]) else { return nil }
+        let clickPoint = CGPoint(x: (bounds["X"]! + (bounds["Width"]! - 5)), y: (bounds["Y"]! + 5))
+        mouseHiddenClick(clickPoint, rightClick: true)
+        return nil
+    }
+
+    guard let point = elementGetPosition(window) else { return nil }
+    mouseHiddenClick(point)
     return nil;
 }
 
 
 func isOnScreen(_ wid: Int) -> Bool {
-    let window = allWindows[wid]
-    if window != nil && window!["kCGWindowIsOnscreen"] != nil {
+    guard let window = allWindows[wid] else { return false }
+    
+    if window["kCGWindowIsOnscreen"] != nil {
         return true
     }
     return false
@@ -124,10 +116,12 @@ func isOnScreen(_ wid: Int) -> Bool {
 
 
 func isBackgroundWindow(_ wid: Int) -> [String: Int]? {
-    let window = allWindows[wid]
-    if window != nil && (window!["kCGWindowOwnerName"] as! String) == "Dock" {
-        return window!["kCGWindowBounds"] as! [String: Int]
+    guard let window = allWindows[wid] else { return nil }
+    
+    if (window["kCGWindowOwnerName"] as! String) == "Dock" {
+        return window["kCGWindowBounds"] as! [String: Int]
     }
+    
     return nil
 }
 
@@ -164,7 +158,7 @@ func printWindowDetails(_ windows: [Int]) {
 }
 
 
-func isWindowIn(_ windowBounds : [String : Any], _ desktopBounds : [String : Any]) -> Bool {
+func isWindowIn(_ windowBounds: [String: Any], _ desktopBounds: [String: Any], fully: Bool = true) -> Bool {
     
     let wx = windowBounds["X"] as! Int
     let wx2 = wx + (windowBounds["Width"] as! Int)
@@ -175,17 +169,45 @@ func isWindowIn(_ windowBounds : [String : Any], _ desktopBounds : [String : Any
     let dy = desktopBounds["Y"] as! Int
     let dy2 = dy + (desktopBounds["Height"] as! Int)
     
-    if (wx >= dx) && (wy >= dy) && (wx2 <= dx2) && (wy2 <= dy2) {
+
+    if (wx >= dx) && (wy >= dy) && (wx2 <= dx2) && (wy2 <= dy2) && fully {
         return true
+    } else if fully || (wx > dx2) || (wx2 < dx) || (wy > dy2) || (wy2 < dy) {
+        return false
     }
-    return false
+    return true
+}
+
+
+func listDesktops() -> [[String: Any]] {
+    var desktops: [[String: Any]] = []
+    
+    let onScreen = CGWindowListCopyWindowInfo(.optionOnScreenOnly, kCGNullWindowID) as! [[String: Any]]
+    for window in onScreen {
+        if let bounds = isBackgroundWindow(window["kCGWindowNumber"] as! Int) {
+            desktops.append(bounds)
+        }
+    }
+    
+    return desktops
+}
+
+
+func intersectCount(_ windowBounds: [String: Any]) -> Int {
+    var count = 0
+    
+    let desktops = listDesktops()
+    for desktopBounds in desktops {
+        if isWindowIn(windowBounds, desktopBounds, fully: false) { count = count + 1 }
+    }
+    return count
 }
 
 
 func findFrontmostWindow(_ windows: [Int]) -> AXUIElement? {
     
     // Get the bounds of the desktop (space) we are looking at
-    guard let bounds = getDesktopBounds(windows) else {
+    guard let desktopBounds = getDesktopBounds(windows) else {
         NSLog("Finding frontmost window failed as desktop bounds couldn't be retreived.")
         return nil
     }
@@ -193,9 +215,11 @@ func findFrontmostWindow(_ windows: [Int]) -> AXUIElement? {
     let options = CGWindowListOption([CGWindowListOption.excludeDesktopElements, CGWindowListOption.optionOnScreenOnly])
     let onScreen = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as! [[String: Any]]
     
-    for w in onScreen {
-        if isWindowIn(w["kCGWindowBounds"]! as! [String: Int], bounds) {
-            let element = findUIElement(w)
+    for window in onScreen {
+        guard let bounds = window["kCGWindowBounds"] else { continue }
+        let windowBounds = bounds as! [String: Int]
+        if isWindowIn(windowBounds, desktopBounds, fully: false) && intersectCount(windowBounds) == 1 {
+            let element = findUIElement(window)
             if elementIsWindow(element) {
                 return element
             }
@@ -208,10 +232,8 @@ func findFrontmostWindow(_ windows: [Int]) -> AXUIElement? {
 
 func getDesktopBounds(_ windows: [Int]) -> [String: Int]? {
     for wid in windows {
-        let bounds = isBackgroundWindow(wid)
-        if bounds != nil {
-            return bounds
-        }
+        guard let bounds = isBackgroundWindow(wid) else { continue }
+        return bounds
     }
     return nil
 }
@@ -268,13 +290,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        NSLog("ApplicationDidFinishLaunching.")
         
         // Create the menu bar button and link it to the toggle popover callback
         if let button = statusItem.button {
             button.image = NSImage(named: "MenuButton")
             button.action = #selector(AppDelegate.togglePopover)
-            NSLog("MenuBtton created.")
         }
         
         // Check a setting exists for launch at login
@@ -320,7 +340,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     
     func applicationWillTerminate(_ aNotification: Notification) {
-        // Insert code here to tear down your application
         NSLog("Waterfall application has terminated.")
     }
     
