@@ -100,6 +100,7 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
     }
 
     guard let point = elementGetPosition(window) else { return nil }
+    NSLog("\(point)")
     mouseHiddenClick(point)
     return nil;
 }

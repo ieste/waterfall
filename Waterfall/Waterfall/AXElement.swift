@@ -23,17 +23,20 @@ func elementGiveFocus(_ element: AXUIElement) {
 
 
 func elementIsWindow(_ element: AXUIElement?) -> Bool {
-    if element == nil {
-        return false
-    }
+    
+    guard element != nil else { return false }
+    
     var role: CFTypeRef?
+    var subrole: CFTypeRef?
     AXUIElementCopyAttributeValue(element!, kAXRoleAttribute as CFString, &role)
-    if role == nil {
+    AXUIElementCopyAttributeValue(element!, kAXSubroleAttribute as CFString, &subrole)
+    
+    guard role != nil && subrole != nil else { return false }
+    
+    if (role as! String) != kAXWindowRole || (subrole as! String) != kAXStandardWindowSubrole || (subrole as! String) != kAXDialogSubrole  {
         return false
     }
-    if (role! as! String) != kAXWindowRole {
-        return false
-    }
+    
     return true
 }
 
