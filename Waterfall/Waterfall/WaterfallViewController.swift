@@ -58,3 +58,5 @@ class WaterfallViewController: NSViewController {
         }
     }
 }
+
+

@@ -322,6 +322,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         defaults.addSuite(named: "com.apple.spaces")
         
         // Create an event tap
+        
         guard let tap = CGEvent.tapCreate(tap: .cgSessionEventTap,
                                           place: .tailAppendEventTap,
                                           options: .defaultTap,
@@ -336,7 +337,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Register event tap
         let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0);
         CFRunLoopAddSource(CFRunLoopGetCurrent(), source, .commonModes);
+ 
         /////////////////////////////////////////////////////////////
+        
     }
     
     

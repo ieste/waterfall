@@ -7,7 +7,7 @@
         <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="fdspViewController" customModule="fdsp" customModuleProvider="target">
+        <customObject id="-2" userLabel="File's Owner" customClass="fdspViewController" customModule="Waterfall" customModuleProvider="target">
             <connections>
                 <outlet property="checkbox" destination="Wcr-cK-Upm" id="oxA-cE-3S8"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
@@ -83,7 +83,7 @@
                 <constraint firstItem="Wcr-cK-Upm" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="26" id="l2f-dJ-0VB"/>
                 <constraint firstAttribute="trailing" secondItem="lMp-lL-83I" secondAttribute="trailing" constant="11" id="nq7-p8-PgL"/>
             </constraints>
-            <point key="canvasLocation" x="68" y="52"/>
+            <point key="canvasLocation" x="68" y="51.5"/>
         </customView>
     </objects>
 </document>
