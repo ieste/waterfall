@@ -11,33 +11,35 @@ import ServiceManagement
 
 class WaterfallViewController: NSViewController {
     
-    @IBOutlet var checkbox: NSButton!
-
+    @IBOutlet var launchCheckbox: NSButton!
+    @IBOutlet var menuIconCheckbox: NSButton!
+    
     let launchAtLogin = "launchAtLogin"
+    let hideMenubarIcon = "hideMenubarIcon"
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Make "launch at login" checkbox state consistent with user settings.
         if UserDefaults.standard.bool(forKey: launchAtLogin) {
-            checkbox.state = 1
+            launchCheckbox.state = 1
         } else {
-            checkbox.state = 0
+            launchCheckbox.state = 0
+        }
+        
+        // Make "hide menubar icon" checkbox state consistent with user settings.
+        if UserDefaults.standard.bool(forKey: hideMenubarIcon) {
+            menuIconCheckbox.state = 1
+        } else {
+            menuIconCheckbox.state = 0
         }
     }
 
-    
     @IBAction func quit(sender: NSButton) {
         NSApplication.shared().terminate(sender)
     }
     
-    
-    @IBAction func relaunch(sender: NSButton) {
-        NSApplication.shared().relaunch(sender:nil)
-    }
-    
-    
-    @IBAction func launchBox(sender: NSButton) {
+    @IBAction func launchChanged(sender: NSButton) {
         
         let appBundleIdentifier = NSString(string: "com.tonyandbella.WaterfallLaunchHelper") as CFString
         
@@ -58,12 +60,12 @@ class WaterfallViewController: NSViewController {
         }
     }
     
-    
-    @IBAction func test(sender: NSButton) {
-        let appDelegate = NSApplication.shared().delegate as! AppDelegate
-        let aVariable = appDelegate.statusItem
-        //NSStatusBar.system().removeStatusItem(aVariable)
-        
+    @IBAction func menuChanged(sender: NSButton) {
+        if sender.state == 0 {
+            UserDefaults.standard.set(false, forKey: hideMenubarIcon)
+        } else {
+            UserDefaults.standard.set(true, forKey: hideMenubarIcon)
+        }
     }
 }
 

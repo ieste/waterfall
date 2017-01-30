@@ -9,85 +9,62 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="WaterfallViewController" customModule="Waterfall">
             <connections>
-                <outlet property="checkbox" destination="Wcr-cK-Upm" id="NSe-hc-47i"/>
+                <outlet property="launchCheckbox" destination="Wcr-cK-Upm" id="Lwb-g6-6j7"/>
+                <outlet property="menuIconCheckbox" destination="dAW-Qn-ALz" id="Pqb-oP-f6s"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="cyh-SZ-qXP"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="Hz6-mo-xeY">
-            <rect key="frame" x="0.0" y="0.0" width="226" height="217"/>
+            <rect key="frame" x="0.0" y="0.0" width="163" height="119"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="Wcr-cK-Upm">
-                    <rect key="frame" x="9" y="187" width="119" height="18"/>
+                    <rect key="frame" x="8" y="88" width="119" height="18"/>
                     <buttonCell key="cell" type="check" title="Launch at Login" bezelStyle="regularSquare" imagePosition="left" inset="2" id="r3m-Ca-2Mn">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <action selector="launchBoxWithSender:" target="-2" id="2Yp-iJ-6u6"/>
+                        <action selector="launchChangedWithSender:" target="-2" id="uJY-Ah-o4V"/>
                     </connections>
                 </button>
-                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="H3I-ct-fjt">
-                    <rect key="frame" x="59" y="61" width="84" height="32"/>
-                    <buttonCell key="cell" type="push" title="Restart" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ZxW-ob-Xuc">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="relaunchWithSender:" target="-2" id="Sws-71-d9Y"/>
-                    </connections>
-                </button>
-                <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lMp-lL-83I">
-                    <rect key="frame" x="215" y="20" width="0.0" height="0.0"/>
+                <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" fixedFrame="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lMp-lL-83I">
+                    <rect key="frame" x="153" y="20" width="0.0" height="0.0"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                 </stackView>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="dAW-Qn-ALz">
-                    <rect key="frame" x="9" y="157" width="137" height="18"/>
+                    <rect key="frame" x="8" y="58" width="137" height="18"/>
                     <buttonCell key="cell" type="check" title="Hide Menubar Icon" bezelStyle="regularSquare" imagePosition="left" inset="2" id="7ty-gf-Dj0">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <action selector="menuChangedWithSender:" target="-2" id="OLm-aw-fMM"/>
+                    </connections>
                 </button>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="slF-8A-20G">
-                    <rect key="frame" x="5" y="111" width="84" height="32"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="72" id="b56-An-aOg"/>
-                    </constraints>
+                    <rect key="frame" x="44" y="12" width="75" height="32"/>
                     <buttonCell key="cell" type="push" title="Quit" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Ygi-uT-m6Z">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <action selector="quitWithSender:" target="-2" id="HEd-9s-6mX"/>
-                    </connections>
-                </button>
-                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EMh-8G-J6x">
-                    <rect key="frame" x="68" y="13" width="64" height="32"/>
-                    <buttonCell key="cell" type="push" title="test" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="etv-dR-riD">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="testWithSender:" target="-2" id="pKE-cb-Ee8"/>
+                        <action selector="quitWithSender:" target="-2" id="ZQl-DL-fny"/>
                     </connections>
                 </button>
             </subviews>
             <constraints>
-                <constraint firstItem="dAW-Qn-ALz" firstAttribute="leading" secondItem="Wcr-cK-Upm" secondAttribute="leading" id="22g-Fn-RN2"/>
-                <constraint firstAttribute="bottom" secondItem="lMp-lL-83I" secondAttribute="bottom" constant="20" symbolic="YES" id="8V8-bi-aOO"/>
-                <constraint firstItem="H3I-ct-fjt" firstAttribute="top" secondItem="slF-8A-20G" secondAttribute="bottom" constant="29" id="B6H-Mk-ibP"/>
-                <constraint firstItem="EMh-8G-J6x" firstAttribute="top" secondItem="H3I-ct-fjt" secondAttribute="bottom" constant="27" id="dhP-UT-QnQ"/>
-                <constraint firstItem="H3I-ct-fjt" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="65" id="fSM-Og-bgT"/>
-                <constraint firstItem="EMh-8G-J6x" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="74" id="flt-Ok-fyu"/>
-                <constraint firstItem="EMh-8G-J6x" firstAttribute="trailing" secondItem="Wcr-cK-Upm" secondAttribute="trailing" id="hFS-20-rU2"/>
-                <constraint firstItem="slF-8A-20G" firstAttribute="top" secondItem="dAW-Qn-ALz" secondAttribute="bottom" constant="20" symbolic="YES" id="leK-ko-4Zd"/>
-                <constraint firstAttribute="trailing" secondItem="lMp-lL-83I" secondAttribute="trailing" constant="11" id="nq7-p8-PgL"/>
-                <constraint firstItem="EMh-8G-J6x" firstAttribute="bottom" secondItem="lMp-lL-83I" secondAttribute="bottom" id="p4r-Tc-qyR"/>
-                <constraint firstItem="dAW-Qn-ALz" firstAttribute="top" secondItem="Wcr-cK-Upm" secondAttribute="bottom" constant="16" id="yqg-eG-iB4"/>
-                <constraint firstItem="slF-8A-20G" firstAttribute="leading" secondItem="dAW-Qn-ALz" secondAttribute="leading" id="zJs-qC-aBC"/>
+                <constraint firstItem="slF-8A-20G" firstAttribute="centerX" secondItem="Hz6-mo-xeY" secondAttribute="centerX" id="30a-H8-m8c"/>
+                <constraint firstAttribute="trailing" secondItem="dAW-Qn-ALz" secondAttribute="trailing" constant="20" symbolic="YES" id="3Vl-aU-6hY"/>
+                <constraint firstItem="slF-8A-20G" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="50" id="LDz-Oz-39E"/>
+                <constraint firstAttribute="bottom" secondItem="slF-8A-20G" secondAttribute="bottom" constant="19" id="Oy8-h3-aSH"/>
+                <constraint firstItem="slF-8A-20G" firstAttribute="top" secondItem="dAW-Qn-ALz" secondAttribute="bottom" constant="20" symbolic="YES" id="RKN-HJ-ZfT"/>
+                <constraint firstItem="Wcr-cK-Upm" firstAttribute="leading" secondItem="dAW-Qn-ALz" secondAttribute="leading" id="hGS-yO-vvX"/>
+                <constraint firstItem="dAW-Qn-ALz" firstAttribute="top" secondItem="Wcr-cK-Upm" secondAttribute="bottom" constant="16" id="wS5-yj-bY3"/>
             </constraints>
-            <point key="canvasLocation" x="71" y="114.5"/>
+            <point key="canvasLocation" x="39.5" y="65.5"/>
         </customView>
     </objects>
 </document>

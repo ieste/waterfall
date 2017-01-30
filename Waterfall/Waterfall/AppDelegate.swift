@@ -284,28 +284,32 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @IBOutlet weak var window: NSWindow!
     
-    let statusItem = NSStatusBar.system().statusItem(withLength:-2)
+    var statusItem: NSStatusItem?
     let popover = NSPopover()
     var eventMonitor: EventMonitor?
+    
     let launchAtLogin = "launchAtLogin"
+    let hideMenubarIcon = "hideMenubarIcon"
     
     
     func applicationDidBecomeActive(_ notification: Notification) {
-        NSLog("Active")
+        guard AXIsProcessTrusted() else { return }
+        
+        // If the menu bar has been hidden, make it visible again and open the popover
+        if UserDefaults.standard.bool(forKey: hideMenubarIcon) || statusItem == nil {
+            createStatusItem()
+            showPopover(sender: nil)
+        }
     }
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         
-        // Check a setting exists for launch at login
-        let launchSetting = UserDefaults.standard.string(forKey: launchAtLogin)
-        if launchSetting == nil {
+        // Check settings exist and set to default if necessary
+        if UserDefaults.standard.string(forKey: launchAtLogin) == nil {
             UserDefaults.standard.set(false, forKey: launchAtLogin)
         }
-        
-        // Create the menu bar button and link it to the toggle popover callback
-        if let button = statusItem.button {
-            button.image = NSImage(named: "MenuButton")
-            button.action = #selector(AppDelegate.togglePopover)
+        if UserDefaults.standard.string(forKey: hideMenubarIcon) == nil {
+            UserDefaults.standard.set(false, forKey: hideMenubarIcon)
         }
         
         // request accessibility API permissions
@@ -315,16 +319,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         guard AXIsProcessTrustedWithOptions(options) else {
             NSLog("I don't have the necessary permissions!")
-            
-            // Set the controller for the popover
+            // Create menu bar icon and set the controller for the popover
+            createStatusItem()
             popover.contentViewController = StartViewController(nibName: "StartViewController", bundle: nil)
-            if let button = statusItem.button {
+            // Display the popover promting user to grant accessibility
+            if let button = statusItem!.button {
                 popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
             }
-            
             return
         }
-        
         
         // Add the suite to grab spaces information
         defaults.addSuite(named: "com.apple.spaces")
@@ -345,7 +348,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Register event tap
         let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0);
         CFRunLoopAddSource(CFRunLoopGetCurrent(), source, .commonModes);
-            
+        
         // Set the controller for the popover
         popover.contentViewController = WaterfallViewController(nibName: "WaterfallViewController", bundle: nil)
             
@@ -357,27 +360,53 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
         eventMonitor?.start()
+        
+        if UserDefaults.standard.bool(forKey: hideMenubarIcon) {
+            NSLog("Launched with hidden menubar icon, do not display it.")
+        } else {
+            createStatusItem()
+        }
     }
-    
     
     func applicationWillTerminate(_ aNotification: Notification) {
         NSLog("Waterfall application has terminated.")
     }
     
+    func createStatusItem() {
+        // Don't allow creation of a status item if one already exists
+        guard statusItem == nil  else { return }
+        let item = NSStatusBar.system().statusItem(withLength:-2)
+        statusItem = item
+        // Create the menu bar button and link it to the toggle popover callback
+        if let button = item.button {
+            button.image = NSImage(named: "MenuButton")
+            button.action = #selector(AppDelegate.togglePopover)
+        }
+    }
+    
+    func removeStatusItem() {
+        guard statusItem != nil else { return }
+        NSStatusBar.system().removeStatusItem(statusItem!)
+        statusItem = nil
+    }
     
     func showPopover(sender: AnyObject?) {
-        if let button = statusItem.button {
+        guard statusItem != nil else { return }
+        if let button = statusItem!.button {
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
         }
         eventMonitor?.start()
     }
     
-    
     func closePopover(sender: AnyObject?) {
         popover.performClose(sender)
         eventMonitor?.stop()
+        
+        // If the user has set menubar icon to hidden, remove it
+        if UserDefaults.standard.bool(forKey: hideMenubarIcon) && AXIsProcessTrusted() {
+            removeStatusItem()
+        }
     }
-    
     
     func togglePopover(sender: AnyObject?) {
         if popover.isShown {

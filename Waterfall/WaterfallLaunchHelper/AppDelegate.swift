@@ -16,8 +16,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         
         // Attempt to launch Waterfall
-        if NSWorkspace.shared().launchApplication("Waterfall") { NSLog("Successfully launched Waterfall from WaterfallLaunchHelper.") }
-        else { NSLog("Failed to launch Waterfall from WaterfallLaunchHelper.") }
+        if NSWorkspace.shared().launchApplication("Waterfall") {
+            NSLog("Successfully launched Waterfall from WaterfallLaunchHelper.")
+        } else {
+            NSLog("Failed to launch Waterfall from WaterfallLaunchHelper.")
+        }
         
         // Terminate the helper application
         NSApp.terminate(nil)
