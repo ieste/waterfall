@@ -31,9 +31,10 @@ func elementIsWindow(_ element: AXUIElement?) -> Bool {
     AXUIElementCopyAttributeValue(element!, kAXRoleAttribute as CFString, &role)
     AXUIElementCopyAttributeValue(element!, kAXSubroleAttribute as CFString, &subrole)
     
-    guard role != nil && subrole != nil else { return false }
+    guard (role != nil) && (subrole != nil) else { return false }
     
-    if (role as! String) != kAXWindowRole || (subrole as! String) != kAXStandardWindowSubrole || (subrole as! String) != kAXDialogSubrole  {
+    if (role as! String) != kAXWindowRole || (((subrole as! String) != kAXStandardWindowSubrole)
+                                              && ((subrole as! String) != kAXDialogSubrole))  {
         return false
     }
     

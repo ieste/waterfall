@@ -92,6 +92,7 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
     
     
     guard let window = findFrontmostWindow(spaces[digit]) else {
+        NSLog("No frontmost window found, defaulting to clicking on menu bar.")
         // If no frontmost window can be found, give focus to desktop by clicking menu bar
         guard let bounds = getDesktopBounds(spaces[digit]) else { return nil }
         let clickPoint = CGPoint(x: (bounds["X"]! + (bounds["Width"]! - 5)), y: (bounds["Y"]! + 5))
@@ -100,7 +101,6 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
     }
 
     guard let point = elementGetPosition(window) else { return nil }
-    NSLog("\(point)")
     mouseHiddenClick(point)
     return nil;
 }
@@ -173,7 +173,7 @@ func isWindowIn(_ windowBounds: [String: Any], _ desktopBounds: [String: Any], f
 
     if (wx >= dx) && (wy >= dy) && (wx2 <= dx2) && (wy2 <= dy2) && fully {
         return true
-    } else if fully || (wx > dx2) || (wx2 < dx) || (wy > dy2) || (wy2 < dy) {
+    } else if fully || (wx >= dx2) || (wx2 <= dx) || (wy >= dy2) || (wy2 <= dy) {
         return false
     }
     return true
