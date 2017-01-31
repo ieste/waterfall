@@ -6,7 +6,7 @@
     },
     {
       "idiom" : "mac",
-      "filename" : "Menu Button.png",
+      "filename" : "Untitled-1.png",
       "scale" : "2x"
     }
   ],
@@ -15,6 +15,6 @@
     "author" : "xcode"
   },
   "properties" : {
-    "template-rendering-intent" : "original"
+    "template-rendering-intent" : "template"
   }
 }
