@@ -115,7 +115,8 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
     guard let point = elementGetPosition(window) else {
         return nil
     }
-    mouseHiddenClick(point)
+    let point2 = CGPoint(x: point.x + 1, y: point.y + 1)
+    mouseHiddenClick(point2)
     return nil;
 }
 
