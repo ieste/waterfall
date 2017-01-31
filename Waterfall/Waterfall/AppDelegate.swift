@@ -2,8 +2,8 @@
 //  AppDelegate.swift
 //  Waterfall
 //
-//  Created by Isabella Stephens on 28/1/17.
-//  Copyright © 2017 tonyandbella. All rights reserved.
+//  Created by Isabella Stephens and Tony Gong on 28/1/17.
+//  Copyright © 2017 Tony and Bella. All rights reserved.
 //
 
 import Cocoa
