@@ -17,9 +17,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // Attempt to launch Waterfall
         if NSWorkspace.shared().launchApplication("Waterfall") {
+#if DEBUG
             NSLog("Successfully launched Waterfall from WaterfallLaunchHelper.")
+#endif
         } else {
+#if DEBUG
             NSLog("Failed to launch Waterfall from WaterfallLaunchHelper.")
+#endif
         }
         
         // Terminate the helper application

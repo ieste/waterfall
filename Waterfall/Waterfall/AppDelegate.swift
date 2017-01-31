@@ -48,7 +48,9 @@ func getSpaces() -> [[Int]] {
 // This callback was registered and is run on every key down event
 func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, refcon: UnsafeMutableRawPointer?) -> Unmanaged<CGEvent>? {
     if type == .tapDisabledByTimeout {
+#if DEBUG
         NSLog("Someone tried to disable us!")
+#endif
         CGEvent.tapEnable(tap: tap!, enable: true)
         return nil
     }
@@ -56,7 +58,9 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
     // Close the popover if it is open
     let delegate =  NSApplication.shared().delegate as! AppDelegate
     if delegate.popover.isShown {
+#if DEBUG
         NSLog("Closing popover!")
+#endif
         delegate.closePopover(sender: nil)
     }
     
@@ -102,7 +106,9 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
     
     
     guard let window = findFrontmostWindow(spaces[digit]) else {
+#if DEBUG
         NSLog("No frontmost window found, defaulting to clicking on menu bar.")
+#endif
         // If no frontmost window can be found, give focus to desktop by clicking menu bar
         guard let bounds = getDesktopBounds(spaces[digit]) else {
             return nil
@@ -228,7 +234,9 @@ func findFrontmostWindow(_ windows: [Int]) -> AXUIElement? {
     
     // Get the bounds of the desktop (space) we are looking at
     guard let desktopBounds = getDesktopBounds(windows) else {
+#if DEBUG
         NSLog("Finding frontmost window failed as desktop bounds couldn't be retreived.")
+#endif
         return nil
     }
 
@@ -333,7 +341,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                    forKey: key) as CFDictionary
         
         guard AXIsProcessTrustedWithOptions(options) else {
+#if DEBUG
             NSLog("I don't have the necessary permissions!")
+#endif
             // Create menu bar icon and set the controller for the popover
             createStatusItem()
             popover.contentViewController = StartViewController(nibName: "StartViewController", bundle: nil)
@@ -356,7 +366,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                 callback: myEventTapCallback,
                                 userInfo: nil)
         guard tap != nil else {
+#if DEBUG
             NSLog("I had access to accessibility API but could not create tap!")
+#endif
             exit(0);
         }
         
@@ -376,14 +388,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         
         if UserDefaults.standard.bool(forKey: hideMenubarIcon) {
+#if DEBUG
             NSLog("Launched with hidden menubar icon, do not display it.")
+#endif
         } else {
             createStatusItem()
         }
     }
     
     func applicationWillTerminate(_ aNotification: Notification) {
+#if DEBUG
         NSLog("Waterfall application has terminated.")
+#endif
     }
     
     func createStatusItem() {

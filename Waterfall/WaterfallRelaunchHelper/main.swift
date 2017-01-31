@@ -30,7 +30,9 @@ autoreleasepool {
     
     // Extract the application PID from the command line args
     guard let parentPID = Int32(CommandLine.arguments[1]) else {
+#if DEBUG
         NSLog("No PID received by WaterfallRelaunchHelper, can't relaunch app.")
+#endif
         fatalError("Relaunch: parentPID == nil.")
     }
     
@@ -40,7 +42,9 @@ autoreleasepool {
         let bundleURL = app.bundleURL!
         
         // terminate() and wait terminated.
+#if DEBUG
         NSLog("Terminating Waterfall application from relaunch helper.")
+#endif
         let listener = Observer { CFRunLoopStop(CFRunLoopGetCurrent()) }
         app.addObserver(listener, forKeyPath: "isTerminated", context: nil)
         app.terminate()
@@ -51,9 +55,13 @@ autoreleasepool {
         do {
             try NSWorkspace.shared().launchApplication(at: bundleURL,
                                                        configuration: [:])
+#if DEBUG
             NSLog("Application launch by WaterfallRelaunchHelper succeeded.")
+#endif
         } catch {
+#if DEBUG
             NSLog("Application launch by WaterfallRelaunchHelper failed.")
+#endif
             fatalError("Relaunch: NSWorkspace.shared().launchApplication failed.")
         }
     }
