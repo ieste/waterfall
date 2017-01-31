@@ -17,6 +17,7 @@ import EventKit
 let key_map : [Int64: Int] = [0x12:1, 0x13:2, 0x14:3, 0x15:4, 0x16:6, 0x17:5, 0x19:9, 0x1A:7, 0x1C:8, 0x1D:10]
 let defaults = UserDefaults.standard
 var allWindows: [Int: [String:Any]] = [:]
+var tap : CFMachPort?   // this is never nil
 
 
 func getSpaces() -> [[Int]] {
@@ -46,10 +47,16 @@ func getSpaces() -> [[Int]] {
 
 // This callback was registered and is run on every key down event
 func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, refcon: UnsafeMutableRawPointer?) -> Unmanaged<CGEvent>? {
+    if type == .tapDisabledByTimeout {
+        NSLog("Someone tried to disable us!")
+        CGEvent.tapEnable(tap: tap!, enable: true)
+        return nil
+    }
     
     // Close the popover if it is open
     let delegate =  NSApplication.shared().delegate as! AppDelegate
     if delegate.popover.isShown {
+        NSLog("Closing popover!")
         delegate.closePopover(sender: nil)
     }
     
@@ -299,7 +306,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let launchAtLogin = "launchAtLogin"
     let hideMenubarIcon = "hideMenubarIcon"
     
-    
     func applicationDidBecomeActive(_ notification: Notification) {
         guard AXIsProcessTrusted() else { return }
         
@@ -342,13 +348,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             
         // Create an event tap
         let bitmask = CGEventMask(1 << CGEventType.keyDown.rawValue)
-        guard let tap = CGEvent.tapCreate(tap: .cgSessionEventTap,
-                                          place: .tailAppendEventTap,
-                                          options: .defaultTap,
-                                          eventsOfInterest: bitmask,
-                                          callback: myEventTapCallback,
-                                          userInfo: nil)
-        else {
+        tap = CGEvent.tapCreate(tap: .cgSessionEventTap,
+                                place: .tailAppendEventTap,
+                                options: .defaultTap,
+                                eventsOfInterest: bitmask,
+                                callback: myEventTapCallback,
+                                userInfo: nil)
+        guard tap != nil else {
             NSLog("I had access to accessibility API but could not create tap!")
             exit(0);
         }
