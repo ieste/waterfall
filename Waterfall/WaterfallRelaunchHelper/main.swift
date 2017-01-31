@@ -2,8 +2,8 @@
 //  main.swift
 //  WaterfallRelaunchHelper
 //
-//  Copied from:
-//  http://stackoverflow.com/questions/27479801/restart-application-programmaticaly/39591935#39591935
+//  Credit to stackoverflow users: 3804019 and 597020
+//  http://stackoverflow.com/questions/27479801
 //
 
 import AppKit
@@ -17,7 +17,8 @@ class Observer: NSObject {
         _callback = callback
     }
     
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?,
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?,
+                               change: [NSKeyValueChangeKey : Any]?,
                                context: UnsafeMutableRawPointer?) {
         _callback()
     }
@@ -48,7 +49,8 @@ autoreleasepool {
         
         // Attempt to relaunch the application
         do {
-            try NSWorkspace.shared().launchApplication(at: bundleURL, configuration: [:])
+            try NSWorkspace.shared().launchApplication(at: bundleURL,
+                                                       configuration: [:])
             NSLog("Application launch by WaterfallRelaunchHelper succeeded.")
         } catch {
             NSLog("Application launch by WaterfallRelaunchHelper failed.")

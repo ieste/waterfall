@@ -20,14 +20,14 @@ class WaterfallViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Make "launch at login" checkbox state consistent with user settings.
+        // Make "launch at login" checkbox state consistent with user settings
         if UserDefaults.standard.bool(forKey: launchAtLogin) {
             launchCheckbox.state = 1
         } else {
             launchCheckbox.state = 0
         }
         
-        // Make "hide menubar icon" checkbox state consistent with user settings.
+        // Make "hide menubar icon" checkbox state consistent with user settings
         if UserDefaults.standard.bool(forKey: hideMenubarIcon) {
             menuIconCheckbox.state = 1
         } else {
@@ -39,17 +39,18 @@ class WaterfallViewController: NSViewController {
         NSApplication.shared().terminate(sender)
     }
     
+    @IBAction func relaunch(sender: NSButton) {
+        NSApplication.shared().relaunch(sender:nil)
+    }
+    
     @IBAction func launchChanged(sender: NSButton) {
         
-        let appBundleIdentifier = NSString(string: "com.tonyandbella.WaterfallLaunchHelper") as CFString
+        let bundleURL = "com.tonyandbella.WaterfallLaunchHelper"
+        let appBundleIdentifier = NSString(string: bundleURL) as CFString
         
         if sender.state == 0 {
             UserDefaults.standard.set(false, forKey: launchAtLogin)
-            if SMLoginItemSetEnabled(appBundleIdentifier, false) {
-                NSLog("Removed login item.")
-            } else {
-                NSLog("Failed to remove login item.")
-            }
+            SMLoginItemSetEnabled(appBundleIdentifier, false)
         } else{
             UserDefaults.standard.set(true, forKey: launchAtLogin)
             if SMLoginItemSetEnabled(appBundleIdentifier, true) {
@@ -70,3 +71,17 @@ class WaterfallViewController: NSViewController {
 }
 
 
+class StartViewController: NSViewController {
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+    
+    @IBAction func relaunch(sender: NSButton) {
+        NSApplication.shared().relaunch(sender:nil)
+    }
+    
+    @IBAction func quit(sender: NSButton) {
+        NSApplication.shared().terminate(sender)
+    }
+}

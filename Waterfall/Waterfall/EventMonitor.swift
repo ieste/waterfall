@@ -24,7 +24,8 @@ public class EventMonitor {
     }
     
     public func start() {
-        monitor = NSEvent.addGlobalMonitorForEvents(matching: mask, handler: handler)
+        monitor = NSEvent.addGlobalMonitorForEvents(matching: mask,
+                                                    handler: handler)
     }
     
     public func stop() {

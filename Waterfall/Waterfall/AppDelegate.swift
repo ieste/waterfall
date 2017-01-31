@@ -8,7 +8,6 @@
 
 import Cocoa
 import AppKit
-////////////////////////////////////////////////////
 import Foundation
 import CoreGraphics
 import ApplicationServices
@@ -47,6 +46,13 @@ func getSpaces() -> [[Int]] {
 
 // This callback was registered and is run on every key down event
 func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, refcon: UnsafeMutableRawPointer?) -> Unmanaged<CGEvent>? {
+    
+    // Close the popover if it is open
+    let delegate =  NSApplication.shared().delegate as! AppDelegate
+    if delegate.popover.isShown {
+        delegate.closePopover(sender: nil)
+    }
+    
     // make sure that the only modifier is Control
     if !(event.flags.contains(.maskControl) &&
         !event.flags.contains(.maskAlphaShift) &&
@@ -81,9 +87,6 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
         allWindows[w["kCGWindowNumber"] as! Int] = w
     }
     
-    //print("\n\n\n--------------Desktop \(digit + 1)---------------")
-    //printWindowDetails(spaces[digit])
-    
     // Pass through key press if not for currently open desktop
     let visibleSpaces = getVisibleSpaces(spaces)
     if !visibleSpaces.contains(digit) || (visibleSpaces.count < 1) {
@@ -94,20 +97,26 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
     guard let window = findFrontmostWindow(spaces[digit]) else {
         NSLog("No frontmost window found, defaulting to clicking on menu bar.")
         // If no frontmost window can be found, give focus to desktop by clicking menu bar
-        guard let bounds = getDesktopBounds(spaces[digit]) else { return nil }
+        guard let bounds = getDesktopBounds(spaces[digit]) else {
+            return nil
+        }
         let clickPoint = CGPoint(x: (bounds["X"]! + (bounds["Width"]! - 5)), y: (bounds["Y"]! + 5))
         mouseHiddenClick(clickPoint, rightClick: true)
         return nil
     }
 
-    guard let point = elementGetPosition(window) else { return nil }
+    guard let point = elementGetPosition(window) else {
+        return nil
+    }
     mouseHiddenClick(point)
     return nil;
 }
 
 
 func isOnScreen(_ wid: Int) -> Bool {
-    guard let window = allWindows[wid] else { return false }
+    guard let window = allWindows[wid] else {
+        return false
+    }
     
     if window["kCGWindowIsOnscreen"] != nil {
         return true
@@ -117,10 +126,12 @@ func isOnScreen(_ wid: Int) -> Bool {
 
 
 func isBackgroundWindow(_ wid: Int) -> [String: Int]? {
-    guard let window = allWindows[wid] else { return nil }
+    guard let window = allWindows[wid] else {
+        return nil
+    }
     
     if (window["kCGWindowOwnerName"] as! String) == "Dock" {
-        return window["kCGWindowBounds"] as! [String: Int]
+        return window["kCGWindowBounds"] as? [String: Int]
     }
     
     return nil
@@ -233,7 +244,9 @@ func findFrontmostWindow(_ windows: [Int]) -> AXUIElement? {
 
 func getDesktopBounds(_ windows: [Int]) -> [String: Int]? {
     for wid in windows {
-        guard let bounds = isBackgroundWindow(wid) else { continue }
+        guard let bounds = isBackgroundWindow(wid) else {
+            continue
+        }
         return bounds
     }
     return nil
@@ -262,10 +275,6 @@ func findUIElement(_ window: [String: Any]) -> AXUIElement? {
 }
 
 
-
-/////////////////////////////////////////////////
-
-
 extension NSApplication {
     func relaunch(sender: AnyObject?) {
         let task = Process()
@@ -276,7 +285,6 @@ extension NSApplication {
         task.launch()
     }
 }
-
 
 
 @NSApplicationMain
@@ -359,7 +367,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 self.closePopover(sender: event)
             }
         }
-        eventMonitor?.start()
         
         if UserDefaults.standard.bool(forKey: hideMenubarIcon) {
             NSLog("Launched with hidden menubar icon, do not display it.")
@@ -374,7 +381,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func createStatusItem() {
         // Don't allow creation of a status item if one already exists
-        guard statusItem == nil  else { return }
+        guard statusItem == nil else {
+            return
+        }
         let item = NSStatusBar.system().statusItem(withLength:-2)
         statusItem = item
         // Create the menu bar button and link it to the toggle popover callback
@@ -385,13 +394,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func removeStatusItem() {
-        guard statusItem != nil else { return }
+        guard statusItem != nil else {
+            return
+        }
         NSStatusBar.system().removeStatusItem(statusItem!)
         statusItem = nil
     }
     
     func showPopover(sender: AnyObject?) {
-        guard statusItem != nil else { return }
+        guard statusItem != nil else {
+            return
+        }
         if let button = statusItem!.button {
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
         }

@@ -25,7 +25,5 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Terminate the helper application
         NSApp.terminate(nil)
     }
-    
-    func applicationWillTerminate(_ aNotification: Notification) {}
 }
 

@@ -10,18 +10,20 @@ import Foundation
 
 
 func mouseGetCursorLocation() -> CGPoint {
+    // Attempt to create dummy even
     let dummyEvent = CGEvent(source: nil)
-    
     if dummyEvent == nil {
         NSLog("Mouse location could not be retrieved.")
         return CGPoint(x: 0, y: 0)
     }
     
+    // Return the dummy event's location (this will be the cursor location)
     return dummyEvent!.location
 }
 
 
-func mouseClick(_ location: CGPoint, doubleClick: Bool = false, rightClick: Bool = false) {
+func mouseClick(_ location: CGPoint, doubleClick: Bool = false,
+                rightClick: Bool = false) {
     
     let tapLocation = CGEventTapLocation.cgSessionEventTap
     
@@ -34,10 +36,12 @@ func mouseClick(_ location: CGPoint, doubleClick: Bool = false, rightClick: Bool
         button = CGMouseButton.right
     }
     
-    let down = CGEvent(mouseEventSource: nil, mouseType: downEventType, mouseCursorPosition: location, mouseButton: button)
-    let up = CGEvent(mouseEventSource: nil, mouseType: upEventType, mouseCursorPosition: location, mouseButton: button)
+    let down = CGEvent(mouseEventSource: nil, mouseType: downEventType,
+                       mouseCursorPosition: location, mouseButton: button)
+    let up = CGEvent(mouseEventSource: nil, mouseType: upEventType,
+                     mouseCursorPosition: location, mouseButton: button)
 
-    if down == nil || up == nil {
+    guard down != nil && up != nil else {
         NSLog("Mouse click event could not be created.")
         return
     }
@@ -55,7 +59,8 @@ func mouseClick(_ location: CGPoint, doubleClick: Bool = false, rightClick: Bool
 
 
 func mouseMoveCursor(_ location: CGPoint) {
-    let move = CGEvent(mouseEventSource: nil, mouseType: CGEventType.mouseMoved, mouseCursorPosition: location, mouseButton: CGMouseButton.left)
+    let move = CGEvent(mouseEventSource: nil, mouseType: .mouseMoved,
+                       mouseCursorPosition: location, mouseButton: .left)
     if move != nil {
         move!.post(tap: CGEventTapLocation.cgSessionEventTap)
     } else {
@@ -64,7 +69,8 @@ func mouseMoveCursor(_ location: CGPoint) {
 }
 
 
-func mouseHiddenClick(_ location: CGPoint, doubleClick: Bool = false, rightClick: Bool = false) {
+func mouseHiddenClick(_ location: CGPoint, doubleClick: Bool = false,
+                      rightClick: Bool = false) {
     let start = mouseGetCursorLocation()
     mouseClick(location, doubleClick: doubleClick, rightClick: rightClick)
     mouseMoveCursor(start)

@@ -17,11 +17,11 @@
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="Hz6-mo-xeY">
-            <rect key="frame" x="0.0" y="0.0" width="163" height="119"/>
+            <rect key="frame" x="0.0" y="0.0" width="188" height="99"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="Wcr-cK-Upm">
-                    <rect key="frame" x="8" y="88" width="119" height="18"/>
+                    <rect key="frame" x="8" y="72" width="119" height="18"/>
                     <buttonCell key="cell" type="check" title="Launch at Login" bezelStyle="regularSquare" imagePosition="left" inset="2" id="r3m-Ca-2Mn">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -31,11 +31,11 @@
                     </connections>
                 </button>
                 <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" fixedFrame="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lMp-lL-83I">
-                    <rect key="frame" x="153" y="20" width="0.0" height="0.0"/>
+                    <rect key="frame" x="153" y="0.0" width="0.0" height="0.0"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                 </stackView>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="dAW-Qn-ALz">
-                    <rect key="frame" x="8" y="58" width="137" height="18"/>
+                    <rect key="frame" x="8" y="48" width="137" height="18"/>
                     <buttonCell key="cell" type="check" title="Hide Menubar Icon" bezelStyle="regularSquare" imagePosition="left" inset="2" id="7ty-gf-Dj0">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -45,7 +45,10 @@
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="slF-8A-20G">
-                    <rect key="frame" x="44" y="12" width="75" height="32"/>
+                    <rect key="frame" x="93" y="6" width="88" height="32"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="76" id="vC9-JQ-QxA"/>
+                    </constraints>
                     <buttonCell key="cell" type="push" title="Quit" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Ygi-uT-m6Z">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
@@ -54,17 +57,31 @@
                         <action selector="quitWithSender:" target="-2" id="ZQl-DL-fny"/>
                     </connections>
                 </button>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uIc-qF-dxd">
+                    <rect key="frame" x="5" y="6" width="88" height="32"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="76" id="IRz-DL-5ob"/>
+                    </constraints>
+                    <buttonCell key="cell" type="push" title="Relaunch" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="i4A-Wj-S8S">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="relaunchWithSender:" target="-2" id="1Tp-MO-lqE"/>
+                    </connections>
+                </button>
             </subviews>
             <constraints>
-                <constraint firstItem="slF-8A-20G" firstAttribute="centerX" secondItem="Hz6-mo-xeY" secondAttribute="centerX" id="30a-H8-m8c"/>
-                <constraint firstAttribute="trailing" secondItem="dAW-Qn-ALz" secondAttribute="trailing" constant="20" symbolic="YES" id="3Vl-aU-6hY"/>
-                <constraint firstItem="slF-8A-20G" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="50" id="LDz-Oz-39E"/>
-                <constraint firstAttribute="bottom" secondItem="slF-8A-20G" secondAttribute="bottom" constant="19" id="Oy8-h3-aSH"/>
-                <constraint firstItem="slF-8A-20G" firstAttribute="top" secondItem="dAW-Qn-ALz" secondAttribute="bottom" constant="20" symbolic="YES" id="RKN-HJ-ZfT"/>
-                <constraint firstItem="Wcr-cK-Upm" firstAttribute="leading" secondItem="dAW-Qn-ALz" secondAttribute="leading" id="hGS-yO-vvX"/>
-                <constraint firstItem="dAW-Qn-ALz" firstAttribute="top" secondItem="Wcr-cK-Upm" secondAttribute="bottom" constant="16" id="wS5-yj-bY3"/>
+                <constraint firstItem="slF-8A-20G" firstAttribute="top" secondItem="dAW-Qn-ALz" secondAttribute="bottom" constant="16" id="JEy-EY-e4m"/>
+                <constraint firstAttribute="trailing" secondItem="slF-8A-20G" secondAttribute="trailing" constant="13" id="O35-Rh-nes"/>
+                <constraint firstItem="slF-8A-20G" firstAttribute="leading" secondItem="uIc-qF-dxd" secondAttribute="trailing" constant="12" symbolic="YES" id="Q4l-Rd-gL0"/>
+                <constraint firstAttribute="bottom" secondItem="slF-8A-20G" secondAttribute="bottom" constant="13" id="ams-oe-3G8"/>
+                <constraint firstItem="Wcr-cK-Upm" firstAttribute="leading" secondItem="dAW-Qn-ALz" secondAttribute="leading" id="cmu-r2-cj0"/>
+                <constraint firstItem="dAW-Qn-ALz" firstAttribute="top" secondItem="Wcr-cK-Upm" secondAttribute="bottom" constant="10" id="e58-av-gSH"/>
+                <constraint firstItem="dAW-Qn-ALz" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="10" id="qmw-H2-07f"/>
+                <constraint firstItem="uIc-qF-dxd" firstAttribute="baseline" secondItem="slF-8A-20G" secondAttribute="baseline" id="rBq-vo-ma6"/>
             </constraints>
-            <point key="canvasLocation" x="39.5" y="65.5"/>
+            <point key="canvasLocation" x="52" y="55.5"/>
         </customView>
     </objects>
 </document>

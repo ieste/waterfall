@@ -15,7 +15,6 @@
 		2820BFAE1E3D74F9007B283A /* WaterfallViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2820BFAD1E3D74F9007B283A /* WaterfallViewController.swift */; };
 		2867AD131E3D7B83008275F3 /* AXElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2867AD121E3D7B83008275F3 /* AXElement.swift */; };
 		2867AD151E3D7B88008275F3 /* Mouse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2867AD141E3D7B88008275F3 /* Mouse.swift */; };
-		2889DD5C1E3DDC020064FAC9 /* StartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2889DD5A1E3DDC020064FAC9 /* StartViewController.swift */; };
 		2889DD5D1E3DDC020064FAC9 /* StartViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2889DD5B1E3DDC020064FAC9 /* StartViewController.xib */; };
 		28F6F5821E3D789700AEBA5A /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28F6F5811E3D789700AEBA5A /* main.swift */; };
 		28F6F5861E3D78E200AEBA5A /* WaterfallRelaunchHelper in Resources */ = {isa = PBXBuildFile; fileRef = 28F6F57F1E3D789700AEBA5A /* WaterfallRelaunchHelper */; };
@@ -75,7 +74,6 @@
 		2820BFAD1E3D74F9007B283A /* WaterfallViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaterfallViewController.swift; sourceTree = "<group>"; };
 		2867AD121E3D7B83008275F3 /* AXElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AXElement.swift; sourceTree = "<group>"; };
 		2867AD141E3D7B88008275F3 /* Mouse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mouse.swift; sourceTree = "<group>"; };
-		2889DD5A1E3DDC020064FAC9 /* StartViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartViewController.swift; sourceTree = "<group>"; };
 		2889DD5B1E3DDC020064FAC9 /* StartViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StartViewController.xib; sourceTree = "<group>"; };
 		28F6F57F1E3D789700AEBA5A /* WaterfallRelaunchHelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = WaterfallRelaunchHelper; sourceTree = BUILT_PRODUCTS_DIR; };
 		28F6F5811E3D789700AEBA5A /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -139,7 +137,6 @@
 				2867AD121E3D7B83008275F3 /* AXElement.swift */,
 				2867AD141E3D7B88008275F3 /* Mouse.swift */,
 				2820BFAD1E3D74F9007B283A /* WaterfallViewController.swift */,
-				2889DD5A1E3DDC020064FAC9 /* StartViewController.swift */,
 				2889DD5B1E3DDC020064FAC9 /* StartViewController.xib */,
 				2820BFAB1E3D74F4007B283A /* WaterfallViewController.xib */,
 				2820BF9C1E3D73D8007B283A /* MainMenu.xib */,
@@ -303,7 +300,6 @@
 				2867AD131E3D7B83008275F3 /* AXElement.swift in Sources */,
 				2820BFA61E3D74A4007B283A /* EventMonitor.swift in Sources */,
 				2820BFAE1E3D74F9007B283A /* WaterfallViewController.swift in Sources */,
-				2889DD5C1E3DDC020064FAC9 /* StartViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

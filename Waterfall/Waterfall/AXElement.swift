@@ -10,28 +10,33 @@ import Foundation
 
 
 func elementGiveFocus(_ element: AXUIElement) {
-    if elementIsWindow(element) {
-        AXUIElementSetAttributeValue(element, kAXMainAttribute as CFString, kCFBooleanTrue)
-        let parent = elementGetParent(element)
-        if parent != nil && elementIsApplication(parent) {
-            AXUIElementSetAttributeValue(parent!, kAXFrontmostAttribute as CFString, kCFBooleanTrue)
-        }
-    } else {
+    guard elementIsWindow(element) else {
         NSLog("Cannot give focus to non-window UI element.")
+        return
+    }
+        
+    AXUIElementSetAttributeValue(element, kAXMainAttribute as CFString, kCFBooleanTrue)
+    let parent = elementGetParent(element)
+    if parent != nil && elementIsApplication(parent) {
+        AXUIElementSetAttributeValue(parent!, kAXFrontmostAttribute as CFString, kCFBooleanTrue)
     }
 }
 
 
 func elementIsWindow(_ element: AXUIElement?) -> Bool {
     
-    guard element != nil else { return false }
+    guard element != nil else {
+        return false
+    }
     
     var role: CFTypeRef?
     var subrole: CFTypeRef?
     AXUIElementCopyAttributeValue(element!, kAXRoleAttribute as CFString, &role)
     AXUIElementCopyAttributeValue(element!, kAXSubroleAttribute as CFString, &subrole)
     
-    guard (role != nil) && (subrole != nil) else { return false }
+    guard (role != nil) && (subrole != nil) else {
+        return false
+    }
     
     if (role as! String) != kAXWindowRole || (((subrole as! String) != kAXStandardWindowSubrole)
                                               && ((subrole as! String) != kAXDialogSubrole))  {
@@ -88,7 +93,8 @@ func elementGetBounds(_ element: AXUIElement) -> [String: Int]? {
     if position == nil || size == nil {
         return nil
     }
-    return ["X": Int(position!.x), "Y": Int(position!.y), "Width": Int(size!.width), "Height": Int(size!.height)]
+    return ["X": Int(position!.x), "Y": Int(position!.y),
+            "Width": Int(size!.width), "Height": Int(size!.height)]
 }
 
 
@@ -117,5 +123,5 @@ func elementGetParent(_ element: AXUIElement) -> AXUIElement? {
     if parent == nil {
         return nil
     }
-    return parent as! AXUIElement
+    return parent as! AXUIElement?
 }
