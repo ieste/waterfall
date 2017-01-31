@@ -2,8 +2,8 @@
 //  EventMonitor.swift
 //  Waterfall
 //
-//  Created by Isabella Stephens on 28/1/17.
-//  Copyright © 2017 tonyandbella. All rights reserved.
+//  Credit to Mikael Konutgan
+//  https://www.raywenderlich.com/98178/os-x-tutorial-menus-popovers-menu-bar-apps
 //
 
 import Foundation

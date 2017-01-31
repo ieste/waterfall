@@ -3,7 +3,7 @@
 //  Waterfall
 //
 //  Created by Isabella Stephens on 28/1/17.
-//  Copyright © 2017 tonyandbella. All rights reserved.
+//  Copyright © 2017 Tony and Bella. All rights reserved.
 //
 
 import Cocoa
