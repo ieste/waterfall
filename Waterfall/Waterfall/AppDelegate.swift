@@ -3,7 +3,8 @@
 //  Waterfall
 //
 //  Created by Isabella Stephens and Tony Gong on 28/1/17.
-//  Copyright © 2017 Tony and Bella. All rights reserved.
+//  Copyright © 2017 Isabella Stephens and Tony Gong. All rights reserved.
+//  License: BSD 3-Clause.
 //
 
 import Cocoa
@@ -100,7 +101,7 @@ func myEventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEven
     
     // Pass through key press if not for currently open desktop
     let visibleSpaces = getVisibleSpaces(spaces)
-    if !visibleSpaces.contains(digit) || (visibleSpaces.count < 1) {
+    if !visibleSpaces.contains(digit) || (visibleSpaces.count < 2) {
         return Unmanaged.passUnretained(event);
     }
     
